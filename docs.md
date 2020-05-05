@@ -9,56 +9,56 @@
 
 ## Daftar endpoint
 
-### User
+### User resource
 
-| METHOD | URL       | Deskripsi                  |
-| ------ | --------- | -------------------------- |
-| POST   | /register | Register user              |
-| POST   | /login    | Login user (get JWT token) |
-| GET    | /user     | GET users                  |
-| GET    | /user/:id | GET user                   |
-| PUT    | /user/:id | PUT user                   |
-| DELETE | /user/:id | DELETE user                |
+| Method | Endpoint  | Deskripsi                  | Participant |
+| ------ | --------- | -------------------------- | ----------- |
+| POST   | /register | Register user              |             |
+| POST   | /login    | Login user (get JWT token) |             |
+| GET    | /user     | GET users                  |             |
+| GET    | /user/:id | GET user                   |             |
+| PUT    | /user/:id | PUT user                   | It's user   |
+| DELETE | /user/:id | DELETE user                | Admin       |
 
-### User's data
+### Game list resource
 
-| METHOD | URL                | Deskripsi             |
-| ------ | ------------------ | --------------------- |
-| POST   | /user/:id/game     | POST user game list   |
-| GET    | /user/:id/game     | GET user game list    |
-| PUT    | /user/:id/game/:id | PUT user game list    |
-| DELETE | /user/:id/game/:id | DELETE user game list |
-| GET    | /user/:id/review   | GET user review list  |
+| Method | Endpoint           | Deskripsi             | Participant |
+| ------ | ------------------ | --------------------- | ----------- |
+| POST   | /user/:id/game     | POST user game list   |             |
+| GET    | /user/:id/game     | GET user game list    |             |
+| PUT    | /user/:id/game/:id | PUT user game list    | It's user   |
+| DELETE | /user/:id/game/:id | DELETE user game list | It's user   |
 
-### Review
+### Review resource
 
-| METHOD | URL         | Deskripsi     |
-| ------ | ----------- | ------------- |
-| POST   | /review     | POST review   |
-| GET    | /review     | GET reviews   |
-| GET    | /review/:id | GET review    |
-| PUT    | /review/:id | PUT review    |
-| DELETE | /review/:id | DELETE review |
+| Method | Endpoint         | Deskripsi            | Participant      |
+| ------ | ---------------- | -------------------- | ---------------- |
+| POST   | /review          | POST review          |                  |
+| GET    | /review          | GET reviews          |                  |
+| GET    | /review/:id      | GET review           |                  |
+| GET    | /user/:id/review | GET user review list |                  |
+| PUT    | /review/:id      | PUT review           | It's user        |
+| DELETE | /review/:id      | DELETE review        | Admin, it's user |
 
-### Game
+### Game resource
 
-| METHOD | URL       | Deskripsi                               |
-| ------ | --------- | --------------------------------------- |
-| GET    | /game     | GET games list (with optional param q=) |
-| GET    | /game/:id | GET game detail                         |
+| Method | Endpoint  | Deskripsi                               | Participant |
+| ------ | --------- | --------------------------------------- | ----------- |
+| GET    | /game     | GET games list (with optional param q=) |             |
+| GET    | /game/:id | GET game detail                         |             |
 
-### Genre
+### Genre resource
 
-| METHOD | URL        | Deskripsi    |
-| ------ | ---------- | ------------ |
-| POST   | /genre     | POST genre   |
-| GET    | /genre     | GET genres   |
-| GET    | /genre/:id | GET genre    |
-| PUT    | /genre/:id | PUT genre    |
-| DELETE | /genre/:id | DELETE genre |
+| Method | Endpoint   | Deskripsi                           | Participant |
+| ------ | ---------- | ----------------------------------- | ----------- |
+| POST   | /genre     | POST genre                          | Admin       |
+| GET    | /genre     | GET genres (with optional param q=) |             |
+| GET    | /genre/:id | GET genre                           |             |
+| PUT    | /genre/:id | PUT genre                           | Admin       |
+| DELETE | /genre/:id | DELETE genre                        | Admin       |
 
 ### Endpoint lainnya
 
-| METHOD | URL       | Deskripsi        |
-| ------ | --------- | ---------------- |
-| GET    | /endpoint | list of endpoint |
+| Method | Endpoint  | Deskripsi        | Participant |
+| ------ | --------- | ---------------- | ----------- |
+| GET    | /endpoint | list of endpoint |             |
