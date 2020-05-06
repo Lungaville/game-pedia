@@ -1,11 +1,23 @@
 # Dokumentasi proyek SOA
 
+* Tema : Video Games
+* API : https://api-docs.igdb.com/
+
 ## Anggota
 
 * Richard Ivan - 217116647
 * Robby Suryanata - 217116649
 * Sandy Khosasi - 217116652
 * William Adi Nata Mulianto - 217116667
+
+## Pembagian
+
+| Resource type          | User    |
+| ---------------------- | ------- |
+| User                   | Robby   |
+| User data + 3rd party  | Willy   |
+| Review + list endpoint | Sandy   |
+| Genre + game           | Richard |
 
 ## Daftar endpoint
 
