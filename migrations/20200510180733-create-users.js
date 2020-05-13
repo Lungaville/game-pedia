@@ -21,6 +21,15 @@ module.exports = {
       gender: {
         type: Sequelize.BOOLEAN
       },
+      password : {
+        type : Sequelize.STRING
+      },
+      token : {
+        type : Sequelize.STRING
+      },
+      tipe : {
+        type : Sequelize.INTEGER
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE

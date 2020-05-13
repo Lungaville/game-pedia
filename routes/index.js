@@ -1,9 +1,76 @@
 var express = require('express');
 var router = express.Router();
+var httpCode = require('../utils/http-code')
+var customValidation = require('../utils/custom_validation')
+var jwt = require('jsonwebtoken')
+const model = require('../models/index');
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+const { check, validationResult } = require('express-validator');
+router.post('/register',[
+    check('name').isString(),
+    check('email').isEmail(),
+    check('password').isLength({min : 5 , max : 8}),
+    check('gender').isNumeric(),
+    check('phone_number').isString(),
+  ],async function(req, res, next) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(httpCode.VALIDATION_FAIL).json({ errors: errors.array() });
+    }
+    try {
+    const users = await model.users.create(req.body);
+    if (users) {
+      res.status(201).json({
+        'status': 'OK',
+        'messages': 'User berhasil ditambahkan',
+        'data': users,
+      })
+    }
+   } catch (err) {
+     res.status(400).json({
+       'status': 'ERROR',
+       'messages': err.message,
+       'data': {},
+     })
+   }
+  });
+
+  
+router.post('/login',async function(req, res, next) {
+  try {
+  const user = await model.users.findOne({where : {email : req.body.email}});
+  if (!user) {
+    return res.status(404).json({
+      'status': 'FAIL',
+      'messages': 'Wrong email or password',
+    })
+  }
+  if(user.validPassword(req.body.password)){
+    var token = jwt.sign( user.toJSON(), 'soa2018', {
+      expiresIn: 86400 // expires in 24 hours
+    });
+    user.token = token;
+    await user.save();
+    return res.status(200).json({
+      'status': 'OK',
+      'messages': 'Success Login',
+      'token' : token
+    })
+    
+  }else{
+    return res.status(404).json({
+      'status': 'FAIL',
+      'messages': 'Email atau Password Salah',
+    })
+
+  }
+ } catch (err) {
+   res.status(400).json({
+     'status': 'ERROR',
+     'messages': err.message,
+   })
+ }
 });
 
-module.exports = router;
+
+  module.exports= router;

@@ -3,23 +3,29 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     
-      return queryInterface.bulkInsert('users', [{
-        name: 'William Mulianto',
-        email: 'william.mulianto@gmail.com',
-        phone_number: '081250818659',
-        gender: 0,
-      },{
+      return queryInterface.bulkInsert('users', [
+      //   {
+      //   name: 'William Mulianto',
+      //   email: 'william.mulianto@gmail.com',
+      //   password :'willy123',
+      //   phone_number: '081250818659',
+      //   gender: 0,
+      // },
+      {
         name: 'Sandy Khosasi',
         email: 'sandy.kho@gmail.com',
+        password :'sandy123',
         phone_number: '0812557778',
         gender: 0,
       },{
         name: 'Richard Ivan',
-        email: 'william.mulianto@gmail.com',
+        password :'richard123',
+        email: 'richard@gmail.com',
         phone_number: '081250818431',
         gender: 0,
       },{
         name: 'Robby Suryanata',
+        password :'robby123',
         email: 'robby@gmail.com',
         phone_number: '08125023112',
         gender: 0,
