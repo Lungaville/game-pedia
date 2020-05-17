@@ -4,5 +4,6 @@ module.exports = Object.freeze({
     VALIDATION_FAIL : 422,
     UNAUTHORIZED : 401,
     FORBIDDEN : 403,
-    SUCCESS_GET : 200
+    SUCCESS_GET : 200,
+    BAD_REQUEST : 400,
 });

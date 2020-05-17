@@ -15,7 +15,20 @@ cd nodejs-game-restful-api
 npm install
 ```
 
-3. Done
+3. Create database
+
+```
+mysql -u 'root' -p
+```
+
+```
+
+create database db_soa;
+commit;
+exit;
+```
+
+4. Done
 
 ## Use nodemon to debug on VSCode automatically
 
@@ -44,7 +57,20 @@ npm install
     ]
 }
 ```
+
 ## Sequalize Guide
+
+### Fix "'sequelize' is not recognized as an internal or external command"
+
+Replace `sequelize` with `npx sequelize`, example :
+
+```
+sequelize --version
+```
+
+```
+npx sequelize --version
+```
 
 ### Generate Model/Migration
 

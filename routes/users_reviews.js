@@ -1,29 +1,25 @@
 var express = require('express');
 var router = express.Router();
 var httpCode = require('../utils/http-code')
+var customValidation = require('../utils/custom_validation')
 const {
     check,
     validationResult
 } = require('express-validator');
 
 /* GET reviews  */
-router.get('/', (req, res, next) => {
+router.get('/', async (req, res, next) => {
     res.send('respond with a resource');
 });
 
-router.get('/:id', (req, res, next) => {
-    // TO DO : CHECK ID EXIST
+router.get('/:id', [
+    check('id').custom(customValidation.reviewExist),
+], async (req, res, next) => {
     res.send('respond with a resource');
 })
 
 router.post('/', [
-    check('gameid').notEmpty().isNumeric().custom(gameid => {
-        // if (gameIdExist(gameid)) {
-            return Promise.resolve()
-        // } else {
-        //     return Promise.reject('Game ID tidak ada di database')
-        // }
-    }),
+    check('gameid').notEmpty().isNumeric().custom(customValidation.gameExists),
     check('title').notEmpty().isString(),
     check('body').notEmpty().isString(),
     check('rating').notEmpty().isNumeric().custom(rating => {
@@ -33,7 +29,7 @@ router.post('/', [
             return Promise.resolve()
         }
     })
-], (req, res, next) => {
+], async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(httpCode.VALIDATION_FAIL).json({
@@ -44,6 +40,7 @@ router.post('/', [
 });
 
 router.put('/:id', [
+    check('id').custom(customValidation.reviewExist),
     check('title').notEmpty().isString(),
     check('body').notEmpty().isString(),
     check('rating').notEmpty().isNumeric().custom(rating => {
@@ -53,8 +50,7 @@ router.put('/:id', [
             return Promise.resolve()
         }
     })
-], (req, res, next) => {
-    // TO DO : CHECK ID EXIST
+], async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(httpCode.VALIDATION_FAIL).json({
@@ -64,8 +60,9 @@ router.put('/:id', [
     res.send('respond with a resource');
 });
 
-router.delete('/:id', (req, res, next) => {
-    // TO DO : CHECK ID EXIST
+router.delete('/:id', [
+    check('id').custom(customValidation.reviewExist),
+], async (req, res, next) => {
     res.send('respond with a resource');
 })
 
