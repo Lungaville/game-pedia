@@ -9,7 +9,7 @@ var usersRouter = require('./routes/users');
 var usersGamesRouter = require('./routes/users_games');
 var gamesRouter = require('./routes/games');
 var genresRouter = require('./routes/genres')
-var reviewRouter = require('./routes/review');
+var usersReviewsRouter = require('./routes/users_reviews');
 
 var app = express();
 
@@ -25,10 +25,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/users', usersRouter);
 app.use('/games', gamesRouter);
 app.use('/genres', genresRouter);
-app.use('/review', usersGamesRouter);
+app.use('/usersGames', usersGamesRouter);
+app.use('/reviews', usersReviewsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
