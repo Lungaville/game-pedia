@@ -17,8 +17,15 @@ router.post('/',[
       return res.status(httpCode.VALIDATION_FAIL).json({ errors: errors.array() });
     }
     try {
-    const games = await model.games.create(req.body);
-    if (games) {
+    const queryGames = await model.games.create(req.body);
+    const game = await model.games.findOne({ where: {
+      name: req.body.name
+    }})
+    const genre = game.genre
+    genre.split(",").map(async genre => {
+      const queryGenre = await model.genre_games.create({id:null,id_game:game.id,id_genre:genre})
+    })
+    if (queryGames) {
       res.status(201).json({
         'status': 'OK',
         'messages': 'Game berhasil ditambahkan',
