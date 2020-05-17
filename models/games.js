@@ -1,7 +1,10 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const games = sequelize.define('games', {
-    name: DataTypes.STRING
+    name: DataTypes.STRING,
+    description: DataTypes.STRING,
+    developer: DataTypes.STRING,
+    image: DataTypes.STRING
   }, {
     updatedAt : 'updated_at',
     createdAt : 'created_at'
