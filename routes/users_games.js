@@ -24,7 +24,7 @@ router.post('/:id_user/game',[
       if (user_game) {
         res.status(201).json({
           'status': 'OK',
-          'messages': 'Successfuly inserted user review',
+          'messages': 'Successfuly inserted user game',
           'data': user_game,
         })
       }

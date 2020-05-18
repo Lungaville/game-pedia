@@ -25,10 +25,11 @@ module.exports = {
       },
       created_at: {
         allowNull: false,
+        defaultValue: Sequelize.literal('SYSDATE()'),
         type: Sequelize.DATE
       },
       updated_at: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.DATE
       }
     });

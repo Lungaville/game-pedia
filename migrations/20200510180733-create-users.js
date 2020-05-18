@@ -21,21 +21,22 @@ module.exports = {
       gender: {
         type: Sequelize.BOOLEAN
       },
-      password : {
-        type : Sequelize.STRING
+      password: {
+        type: Sequelize.STRING
       },
-      token : {
-        type : Sequelize.STRING
+      token: {
+        type: Sequelize.STRING
       },
-      tipe : {
-        type : Sequelize.INTEGER
+      tipe: {
+        type: Sequelize.INTEGER
       },
       created_at: {
         allowNull: false,
+        defaultValue: Sequelize.literal('SYSDATE()'),
         type: Sequelize.DATE
       },
       updated_at: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.DATE,
       }
     });

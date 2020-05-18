@@ -18,17 +18,30 @@ npm install
 3. Create database
 
 ```
+mysql -u 'root'
+create database db_soa;
+commit;
+exit
+```
+
+4. Migrate and seed
+
+```
+npx sequelize db:migrate
+npx sequelize db:seed:all
+```
+
+## Change MySQL user 'root' password
+
+```
 mysql -u 'root' -p
 ```
 
 ```
-
-create database db_soa;
+SET PASSWORD FOR root@localhost=PASSWORD('');
 commit;
-exit;
+exit
 ```
-
-4. Done
 
 ## Use nodemon to debug on VSCode automatically
 

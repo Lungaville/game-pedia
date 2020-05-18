@@ -16,10 +16,11 @@ module.exports = {
       },
       createdAt: {
         allowNull: false,
+        defaultValue: Sequelize.literal('SYSDATE()'),
         type: Sequelize.DATE
       },
       updatedAt: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.DATE
       }
     });

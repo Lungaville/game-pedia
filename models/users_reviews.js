@@ -1,6 +1,6 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  const users_review = sequelize.define('users_review', {
+  const users_reviews = sequelize.define('users_reviews', {
     id_game: DataTypes.INTEGER,
     id_user: DataTypes.INTEGER,
     review: DataTypes.STRING,
@@ -9,8 +9,8 @@ module.exports = (sequelize, DataTypes) => {
     updatedAt : 'updated_at',
     createdAt : 'created_at'
   });
-  users_review.associate = function(models) {
+  users_reviews.associate = function(models) {
     // associations can be defined here
   };
-  return users_review;
+  return users_reviews;
 };

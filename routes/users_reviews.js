@@ -6,26 +6,51 @@ const {
     check,
     validationResult
 } = require('express-validator');
+const model = require('../models/index');
 
 /* GET reviews  */
 router.get('/', async (req, res, next) => {
-    res.send('respond with a resource');
+    const reviews = await model.users_reviews.findAll({});
+    console.log(res.locals.reviews);
+    return res.json({
+        'status': 'OK',
+        'messages': '',
+        'data': reviews
+    })
 });
 
 router.get('/:id', [
     check('id').custom(customValidation.reviewExist),
 ], async (req, res, next) => {
-    res.send('respond with a resource');
+    try {
+        const review = await model.users_reviews.findOne({
+            where: {
+                'id': req.params.id
+            }
+        });
+        console.log(res.locals.review);
+        return res.json({
+            'status': 'OK',
+            'messages': '',
+            'data': review
+        })
+    } catch (err) {
+        res.status(400).json({
+            'status': 'ERROR',
+            'messages': err.message,
+            'data': {},
+        })
+    }
 })
 
 router.post('/', [
-    check('gameid').notEmpty().isNumeric().custom(customValidation.gameExists),
-    check('title').notEmpty().isString(),
-    check('body').notEmpty().isString(),
-    check('rating').notEmpty().isNumeric().custom(rating => {
-        if (rating < 1 || rating > 10) {
-            return Promise.reject('Rating is not in range 1-10')
-        }else{
+    check('id_game').notEmpty().isNumeric().custom(customValidation.gameExists),
+    check('id_user').notEmpty().isNumeric().custom(customValidation.userExists),
+    check('review').notEmpty().isString(),
+    check('review_score').notEmpty().isNumeric().custom(score => {
+        if (score < 1 || score > 10) {
+            return Promise.reject('Review score is not in range 1-10')
+        } else {
             return Promise.resolve()
         }
     })
@@ -36,17 +61,39 @@ router.post('/', [
             errors: errors.array()
         });
     }
-    res.send('respond with a resource');
+    try {
+        const data = {
+            id_game: req.body.id_game,
+            id_user: req.body.id_user,
+            review: req.body.review,
+            review_score: req.body.review_score,
+        }
+        console.log(data);
+        const user_review = await model.users_reviews.create(data)
+        if (user_review) {
+            res.status(201).json({
+                'status': 'OK',
+                'messages': 'Successfuly inserted user review',
+                'data': user_review,
+            })
+
+        }
+    } catch (err) {
+        res.status(400).json({
+            'status': 'ERROR',
+            'messages': err.message,
+            'data': {},
+        })
+    }
 });
 
-router.put('/:id', [
+router.patch('/:id', [
     check('id').custom(customValidation.reviewExist),
-    check('title').notEmpty().isString(),
-    check('body').notEmpty().isString(),
-    check('rating').notEmpty().isNumeric().custom(rating => {
+    check('review').notEmpty().isString(),
+    check('review_score').notEmpty().isNumeric().custom(rating => {
         if (rating < 1 || rating > 10) {
             return Promise.reject('Rating is not in range 1-10')
-        }else{
+        } else {
             return Promise.resolve()
         }
     })
@@ -57,13 +104,58 @@ router.put('/:id', [
             errors: errors.array()
         });
     }
-    res.send('respond with a resource');
+    try {
+        const id = req.params.id;        
+        const {
+            review,
+            review_score
+        } = req.body;
+        const user_review = await model.users_reviews.update({
+            review,
+            review_score
+        }, {
+            where: {
+                id: id
+            }
+        });
+        if (user_review) {
+            res.json({
+                'status': 'OK',
+                'messages': 'User berhasil diupdate',
+                'data': user_review,
+            })
+        }
+    } catch (err) {
+        res.status(400).json({
+            'status': 'ERROR',
+            'messages': err.message,
+        })
+    }
 });
 
 router.delete('/:id', [
     check('id').custom(customValidation.reviewExist),
 ], async (req, res, next) => {
-    res.send('respond with a resource');
+    try {
+        const id = req.params.id;
+        const user_review = await model.users_reviews.destroy({
+            where: {
+                id: id
+            }
+        })
+        if (user_review) {
+            res.json({
+                'status': 'OK',
+                'messages': 'User review berhasil dihapus',
+                'data': user_review,
+            })
+        }
+    } catch (err) {
+        res.status(400).json({
+            'status': 'ERROR',
+            'messages': err.message,
+        })
+    }
 })
 
 module.exports = router;

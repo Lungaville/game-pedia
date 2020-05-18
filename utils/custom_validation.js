@@ -19,7 +19,7 @@ var userExist = (value,{req}) =>{
 }
 
 var reviewExist = (value,{req}) =>{
-    return model.users_review.findOne({ where : {id : value}}).then((games) => {
+    return model.users_reviews.findOne({ where : {id : value}}).then((games) => {
       if(games == null){
         return Promise.reject('Review Not Found');
       }
