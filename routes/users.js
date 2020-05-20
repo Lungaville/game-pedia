@@ -18,6 +18,25 @@ router.get('/',[customMiddleware.jwtMiddleware,customMiddleware.minimumPro] ,asy
   })
 });
 
+router.get('/:id', async function(req, res, next) {
+  try {
+    const userId = req.params.id;
+    const user = await model.users.findOne({ where: {
+      id: userId
+    }})
+    if (user) {
+      res.json({
+        'status': 'OK',
+        'data': user,
+      })
+    }
+  } catch (err) {
+    res.status(400).json({
+      'status': 'ERROR',
+      'message': err.message,
+    })
+  }
+});
 
 router.patch('/:id', async function (req, res, next) {
   try {
