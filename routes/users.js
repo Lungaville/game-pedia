@@ -13,7 +13,7 @@ router.get('/',[customMiddleware.jwtMiddleware,customMiddleware.minimumPro] ,asy
   // console.log(res.locals.user);
   return res.json({
     'status': 'OK',
-    'messages': '',
+    'message': '',
     'data': users
   })
 });
@@ -41,14 +41,14 @@ router.patch('/:id', async function (req, res, next) {
     if (users) {
       res.json({
         'status': 'OK',
-        'messages': 'User berhasil diupdate',
+        'message': 'User berhasil diupdate',
         'data': users,
       })
     }
   } catch (err) {
     res.status(400).json({
       'status': 'ERROR',
-      'messages': err.message,
+      'message': err.message,
     })
   }
 });
@@ -62,14 +62,14 @@ router.delete('/:id', async function (req, res, next) {
     if (users) {
       res.json({
         'status': 'OK',
-        'messages': 'User berhasil dihapus',
+        'message': 'User berhasil dihapus',
         'data': users,
       })
     }
   } catch (err) {
     res.status(400).json({
       'status': 'ERROR',
-      'messages': err.message,
+      'message': err.message,
     })
   }
 });

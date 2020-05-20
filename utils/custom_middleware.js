@@ -12,14 +12,14 @@ var jwtMiddleware = async function(req, res, next) {
     if(!token){
         return res.status(httpCode.UNAUTHORIZED).json({
             'status': 'ERROR',
-            'messages': `Token not found in header`,
+            'message': `Token not found in header`,
         });
     } 
     let user = await model.users.findOne({ where : {token : req.header('Token') }})
     if(user == null){  
         return res.status(httpCode.UNAUTHORIZED).json({
             'status': 'ERROR',
-            'messages': `Invalid Token`,
+            'message': `Invalid Token`,
         });
     }
     res.locals.user = user;
@@ -31,7 +31,7 @@ function checkRole(role){
         if(!res.locals.user.tipe  <role.value ){
             return res.status(httpCode.FORBIDDEN).json({
                 'status': 'ERROR',
-                'messages': `Minimum ${role.name} to use this endpoint `,
+                'message': `Minimum ${role.name} to use this endpoint `,
                 });
         }
         next();

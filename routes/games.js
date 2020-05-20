@@ -28,14 +28,14 @@ router.post('/',[
     if (queryGames) {
       res.status(201).json({
         'status': 'OK',
-        'messages': 'Game berhasil ditambahkan',
+        'message': 'Game berhasil ditambahkan',
         'data': games,
       })
     }
    } catch (err) {
      res.status(400).json({
        'status': 'ERROR',
-       'messages': err.message,
+       'message': err.message,
        'data': {},
      })
    }
@@ -46,7 +46,7 @@ router.get('/',async function(req, res, next) {
   // console.log(res.locals.user);
   return res.json({
     'status': 'OK',
-    'messages': '',
+    'message': '',
     'data': games
   })
 });
@@ -67,7 +67,7 @@ router.get('/:id', async function (req, res, next) {
   } catch (err) {
     res.status(400).json({
       'status': 'ERROR',
-      'messages': err.message,
+      'message': err.message,
     })
   }
 });

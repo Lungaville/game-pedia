@@ -14,7 +14,7 @@ router.get('/', async (req, res, next) => {
     console.log(res.locals.reviews);
     return res.json({
         'status': 'OK',
-        'messages': '',
+        'message': '',
         'data': reviews
     })
 });
@@ -31,13 +31,13 @@ router.get('/:id', [
         console.log(res.locals.review);
         return res.json({
             'status': 'OK',
-            'messages': '',
+            'message': '',
             'data': review
         })
     } catch (err) {
         res.status(400).json({
             'status': 'ERROR',
-            'messages': err.message,
+            'message': err.message,
             'data': {},
         })
     }
@@ -73,7 +73,7 @@ router.post('/', [
         if (user_review) {
             res.status(201).json({
                 'status': 'OK',
-                'messages': 'Successfuly inserted user review',
+                'message': 'Successfuly inserted user review',
                 'data': user_review,
             })
 
@@ -81,7 +81,7 @@ router.post('/', [
     } catch (err) {
         res.status(400).json({
             'status': 'ERROR',
-            'messages': err.message,
+            'message': err.message,
             'data': {},
         })
     }
@@ -121,14 +121,14 @@ router.patch('/:id', [
         if (user_review) {
             res.json({
                 'status': 'OK',
-                'messages': 'User berhasil diupdate',
+                'message': 'User berhasil diupdate',
                 'data': user_review,
             })
         }
     } catch (err) {
         res.status(400).json({
             'status': 'ERROR',
-            'messages': err.message,
+            'message': err.message,
         })
     }
 });
@@ -146,14 +146,14 @@ router.delete('/:id', [
         if (user_review) {
             res.json({
                 'status': 'OK',
-                'messages': 'User review berhasil dihapus',
+                'message': 'User review berhasil dihapus',
                 'data': user_review,
             })
         }
     } catch (err) {
         res.status(400).json({
             'status': 'ERROR',
-            'messages': err.message,
+            'message': err.message,
         })
     }
 })

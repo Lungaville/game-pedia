@@ -9,9 +9,10 @@ const { check, validationResult } = require('express-validator');
 router.post('/register',[
     check('name').isString(),
     check('email').isEmail(),
-    check('password').isLength({min : 5 , max : 8}),
+    check('password').isLength({min : 5 , max : 15}),
     check('gender').isNumeric(),
     check('phone_number').isString(),
+    check('tipe').isNumeric(),
   ],async function(req, res, next) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -22,14 +23,14 @@ router.post('/register',[
     if (users) {
       res.status(201).json({
         'status': 'OK',
-        'messages': 'User berhasil ditambahkan',
+        'message': 'Berhasil melakukan registrasi user',
         'data': users,
       })
     }
    } catch (err) {
      res.status(400).json({
        'status': 'ERROR',
-       'messages': err.message,
+       'message': err.message,
        'data': {},
      })
    }
@@ -42,7 +43,7 @@ router.post('/login',async function(req, res, next) {
   if (!user) {
     return res.status(404).json({
       'status': 'FAIL',
-      'messages': 'Wrong email or password',
+      'message': 'Wrong email or password',
     })
   }
   if(user.validPassword(req.body.password)){
@@ -53,21 +54,21 @@ router.post('/login',async function(req, res, next) {
     await user.save();
     return res.status(200).json({
       'status': 'OK',
-      'messages': 'Success Login',
+      'message': 'Success Login',
       'token' : token
     })
     
   }else{
     return res.status(404).json({
       'status': 'FAIL',
-      'messages': 'Email atau Password Salah',
+      'message': 'Email atau Password Salah',
     })
 
   }
  } catch (err) {
    res.status(400).json({
      'status': 'ERROR',
-     'messages': err.message,
+     'message': err.message,
    })
  }
 });

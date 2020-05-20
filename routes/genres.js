@@ -20,14 +20,14 @@ router.post('/',[
       if (genres) {
         res.status(201).json({
           'status': 'OK',
-          'messages': 'Genre berhasil ditambahkan',
+          'message': 'Genre berhasil ditambahkan',
           'data': genres,
         })
       }
     } catch (err) {
       res.status(400).json({
         'status': 'ERROR',
-        'messages': err.message,
+        'message': err.message,
         'data': {},
       })
     }
@@ -42,7 +42,7 @@ router.get('/',async function(req, res, next) {
   // console.log(res.locals.user);
   return res.json({
     'status': 'OK',
-    'messages': '',
+    'message': '',
     'data': genres
   })
 });
@@ -63,7 +63,7 @@ router.get('/:id', async function (req, res, next) {
   } catch (err) {
     res.status(400).json({
       'status': 'ERROR',
-      'messages': err.message,
+      'message': err.message,
     })
   }
 });
@@ -82,14 +82,14 @@ router.patch('/:id', async function (req, res, next) {
     if (genres) {
       res.json({
         'status': 'OK',
-        'messages': 'Genre berhasil diupdate',
+        'message': 'Genre berhasil diupdate',
         'data': genres,
       })
     }
   } catch (err) {
     res.status(400).json({
       'status': 'ERROR',
-      'messages': err.message,
+      'message': err.message,
     })
   }
 });
@@ -103,14 +103,14 @@ router.delete('/:id', async function (req, res, next) {
     if (genres) {
       res.json({
         'status': 'OK',
-        'messages': 'Genre berhasil dihapus',
+        'message': 'Genre berhasil dihapus',
         'data': genres,
       })
     }
   } catch (err) {
     res.status(400).json({
       'status': 'ERROR',
-      'messages': err.message,
+      'message': err.message,
     })
   }
 });

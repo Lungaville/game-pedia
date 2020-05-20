@@ -1,0 +1,124 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 2,
+    "passes": 1,
+    "pending": 0,
+    "failures": 1,
+    "start": "2020-05-20T03:10:01.184Z",
+    "end": "2020-05-20T03:10:01.764Z",
+    "duration": 580,
+    "testsRegistered": 2,
+    "passPercent": 50,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "a8347d8b-8da9-4229-a1ae-85c48c0be057",
+      "title": "",
+      "fullFile": "",
+      "file": "",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "a206b010-d3f4-42c9-8c4c-72c0c51aa810",
+          "title": "Basic User Test",
+          "fullFile": "D:\\nodejs-game-restful-api\\tests\\apiTests.js",
+          "file": "\\tests\\apiTests.js",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "Response should be the registered user",
+              "fullTitle": "Basic User Test Response should be the registered user",
+              "timedOut": false,
+              "duration": 347,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "request(app)\n    .post('/register')\n    .send({name :'Ricahrd' , email : email, password : password, gender: 1, phone_number : '12345678', tipe: tipe })\n    .set('Accept', 'application/json')\n    .expect('Content-Type', /json/)\n    .expect(responseCode.SUCCESS_INSERT)\n    .expect(response => {\n        expect(response.body.message).to.equal('Berhasil melakukan registrasi user','Response message tidak sesuai');\n        expect(response.body.data.email).to.equal( email,'Email yang diberikan pada response tidak sesuai')\n        expect(response.body.data.tipe).to.equal(tipe,'Tipe yang diberikan pada resposne tidak sesuai')\n    })\n    .end(done);",
+              "err": {},
+              "uuid": "08370e91-dbd7-4c7e-b9ab-9b8fc95b795f",
+              "parentUUID": "a206b010-d3f4-42c9-8c4c-72c0c51aa810",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "User can login",
+              "fullTitle": "Basic User Test User can login",
+              "timedOut": false,
+              "duration": 189,
+              "state": "failed",
+              "speed": null,
+              "pass": false,
+              "fail": true,
+              "pending": false,
+              "context": null,
+              "code": "request(app)\n    .post('/login')\n    .send({email : email, password: password })\n    .set('Accept', 'application/json')\n    .expect('Content-Type', /json/)\n    .expect(responseCode.SUCCESS_GET)\n    .expect(response => {\n        expect(response.body.message).to.equal('Success Login','Response message tidak sesuai');\n        var userLogin = jwt.verify(response.body.token, 'soa2018');\n        expect('willyw777').to.equal(email,'Payload email JWT tidak sesuai')\n    })\n    .end(done);;",
+              "err": {
+                "message": "AssertionError: Payload email JWT tidak sesuai: expected 'willyw777' to equal 'testuser@gmail.com'",
+                "estack": "AssertionError: Payload email JWT tidak sesuai: expected 'willyw777' to equal 'testuser@gmail.com'\n    at request.post.send.set.expect.expect.expect.response (tests\\apiTests.js:36:40)\n    at Test._assertFunction (node_modules\\supertest\\lib\\test.js:283:11)\n    at Test.assert (node_modules\\supertest\\lib\\test.js:173:18)\n    at Server.localAssert (node_modules\\supertest\\lib\\test.js:131:12)\n    at emitCloseNT (net.js:1616:8)\n    at process._tickCallback (internal/process/next_tick.js:63:19)",
+                "diff": "- willyw777\n+ testuser@gmail.com\n"
+              },
+              "uuid": "3257b010-dcb4-4f4f-bae1-494555958976",
+              "parentUUID": "a206b010-d3f4-42c9-8c4c-72c0c51aa810",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "08370e91-dbd7-4c7e-b9ab-9b8fc95b795f"
+          ],
+          "failures": [
+            "3257b010-dcb4-4f4f-bae1-494555958976"
+          ],
+          "pending": [],
+          "skipped": [],
+          "duration": 536,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 4000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 4000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "7.1.2"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": true,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "6.1.1"
+    },
+    "marge": {
+      "options": null,
+      "version": "5.1.0"
+    }
+  }
+}

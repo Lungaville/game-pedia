@@ -24,14 +24,14 @@ router.post('/:id_user/game',[
       if (user_game) {
         res.status(201).json({
           'status': 'OK',
-          'messages': 'Successfuly inserted user game',
+          'message': 'Successfuly inserted user game',
           'data': user_game,
         })
       }
      } catch (err) {
        res.status(400).json({
          'status': 'ERROR',
-         'messages': err.message,
+         'message': err.message,
          'data': {},
        })
      }
@@ -46,14 +46,14 @@ router.post('/:id_user/game',[
       }});
       return res.json({
         'status': 'OK',
-        'messages': '',
+        'message': '',
         'data': user_games
       })
     }
     catch(err){
       res.status(400).json({
         'status': 'ERROR',
-        'messages': err.message,
+        'message': err.message,
         'data': {},
       })
     }
@@ -76,7 +76,7 @@ router.post('/:id_user/game',[
       if(user_game ==null){
        return res.status(400).json({
           'status': 'ERROR',
-          'messages': 'User game not found',
+          'message': 'User game not found',
         })
   
       }
@@ -84,13 +84,13 @@ router.post('/:id_user/game',[
       if (user_game) {
         res.status(201).json({
           'status': 'OK',
-          'messages': 'Successfuly deleted user game',
+          'message': 'Successfuly deleted user game',
         })
       }
      } catch (err) {
        res.status(400).json({
          'status': 'ERROR',
-         'messages': err.message,
+         'message': err.message,
          'data': {},
        })
      }
