@@ -96,3 +96,8 @@ sequelize model:create --name users --attributes name:string,email:string,phone_
 ```bash
 sequelize db:migrate
 ```
+## Unit Testing Guide
+
+```bash
+npm test
+```
