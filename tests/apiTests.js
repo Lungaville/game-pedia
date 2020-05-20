@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken')
 let email = 'testuser@gmail.com'
 let password = 'password123'
 let tipe = 1
+let token ="";
 
 describe('Basic User Test', function () {
     it('Response should be the registered user', function (done) {
@@ -33,7 +34,8 @@ describe('Basic User Test', function () {
             .expect(response => {
                 expect(response.body.message).to.equal('Success Login','Response message tidak sesuai');
                 var userLogin = jwt.verify(response.body.token, 'soa2018');
-                expect('willyw777').to.equal(email,'Payload email JWT tidak sesuai')
+                expect(userLogin.email).to.equal(email,'Payload email JWT tidak sesuai')
+                token = response.body.token;
             })
             .end(done);;
     });
