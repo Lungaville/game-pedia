@@ -25,7 +25,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       token: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING(1000)
       },
       tipe: {
         type: Sequelize.INTEGER

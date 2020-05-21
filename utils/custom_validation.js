@@ -11,10 +11,10 @@ var gameExist = (value,{req}) =>{
 
 var userExist = (value,{req}) =>{
     return model.users.findOne({ where : {id : value}}).then((user) => {
+      console.log(user);
       if(user == null){
         return Promise.reject('User Not Found');
       }
-  
     })
 }
 
@@ -28,9 +28,9 @@ var reviewExist = (value,{req}) =>{
 }
 
 var userGameUnique = (value,{req}) =>{
-    return model.users_games.findOne({ where : {id_user : req.params.id_user || req.body.id_user , id_game : req.params.id_game || req.body.id_game }}).then((review) => {
+    return model.users_games.findOne({ where : {id_user : req.params.id_user || req.body.id_user || req.user_auth.id , id_game : req.params.id_game || req.body.id_game }}).then((review) => {
       if(review != null){
-        return Promise.reject('Review Duplicate');
+        return Promise.reject('User game duplicate');
       }
   
     })

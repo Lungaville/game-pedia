@@ -22,7 +22,7 @@ var jwtMiddleware = async function(req, res, next) {
             'message': `Invalid Token`,
         });
     }
-    res.locals.user = user;
+    req.user_auth = user;
     next();
 }
 

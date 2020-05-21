@@ -22,12 +22,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use((req, res, next) => {
+  if(res.locals.user != undefined)
+  req.locals.user = res.locals.user;
+  next();
+});
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/games', gamesRouter);
 app.use('/genres', genresRouter);
-app.use('/usersGames', usersGamesRouter);
+app.use('/user', usersGamesRouter);
 app.use('/reviews', usersReviewsRouter);
 
 // catch 404 and forward to error handler
