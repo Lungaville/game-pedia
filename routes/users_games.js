@@ -88,12 +88,12 @@ router.get(
           id_user: req.params.id_user,
         },
         include: [
-          {
-            model: model.users,
-            as: "user",
-            attributes: { exclude: ["password", "token", "tipe"] },
-            // attributes: ["name",],
-          },
+          // {
+          //   model: model.users,
+          //   as: "user",
+          //   attributes: { exclude: ["password", "token", "tipe"] },
+          //   // attributes: ["name",],
+          // },
           "game",
         ],
       });
