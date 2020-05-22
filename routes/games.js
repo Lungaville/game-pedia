@@ -10,22 +10,26 @@ const { check, validationResult } = require("express-validator");
 router.post(
   "/",
   [
+    customMiddleware.jwtMiddleware,
     check("name").isString(),
     check("description").isString(),
-    check("developer").isString(),
+    check("genre").isString(),
   ],
   async function (req, res, next) {
     const errors = validationResult(req);
+    const body = {...req.body,created_by:parseInt(req.user_auth.id)}
+    console.log(body)
     if (!errors.isEmpty()) {
       return res
         .status(httpCode.VALIDATION_FAIL)
         .json({ errors: errors.array() });
     }
     try {
-      const queryGames = await model.games.create(req.body);
+      console.log({...req.body,created_by:parseInt(req.user_auth.id)})
+      const queryGames = await model.games.create({...req.body,created_by:parseInt(req.user_auth.id)});
       const game = await model.games.findOne({
         where: {
-          name: req.body.name,
+          id: queryGames.id,
         },
       });
       const genre = game.genre;
@@ -54,7 +58,15 @@ router.post(
 );
 
 router.get("/", async function (req, res, next) {
-  const games = await model.games.findAll({});
+  const games = await model.games.findAll({
+    include: [
+      {
+        model: model.users,
+        as: "developer",
+        attributes: ["name"],
+      },
+    ],
+  });
   // console.log(res.locals.user);
   return res.json({
     status: "OK",
@@ -70,6 +82,13 @@ router.get("/:id", async function (req, res, next) {
       where: {
         id: gameId,
       },
+      include: [
+        {
+          model: model.users,
+          as: "developer",
+          attributes: ["name"],
+        },
+      ],
     });
     if (game) {
       res.json({

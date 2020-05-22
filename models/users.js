@@ -22,6 +22,10 @@ module.exports = (sequelize, DataTypes) => {
   },);
   users.associate = function(models) {
     // associations can be defined here
+    users.hasMany(models.games, {
+      foreignKey: "id",
+      as: "developer",
+    });
   };
   users.prototype.toJSON =  function () {
     var values = Object.assign({}, this.get());
