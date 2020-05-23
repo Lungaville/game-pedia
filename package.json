@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "nodemon ./bin/www",
-    "test": "mocha 'tests/apiTests.js' 'tests/gameTests' mochawesome --exit --timeout 4000"
+    "test": "mocha 'tests/apiTests.js' 'tests/gameTests' 'tests/genreTests' mochawesome --exit --timeout 4000"
   },
   "dependencies": {
     "bcrypt": "^4.0.1",

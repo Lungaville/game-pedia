@@ -11,7 +11,7 @@ let gameName2 = "The Long Dark"
 let developerName = "richard"
 let developerName2 = "Ricahrd"
 let developerId = 1
-let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6InJpY2hhcmQiLCJlbWFpbCI6InJpY2hhcmRAZ21haWwuY29tIiwicGhvbmVfbnVtYmVyIjoiMDg1MTM4Mzg0NzUiLCJnZW5kZXIiOnRydWUsInRpcGUiOjEsImNyZWF0ZWRfYXQiOiIyMDIwLTA1LTIyVDEzOjIzOjU0LjAwMFoiLCJ1cGRhdGVkX2F0IjoiMjAyMC0wNS0yMlQxMzoyMzo1NC4wMDBaIiwiaWF0IjoxNTkwMTYwMzE0LCJleHAiOjE1OTAyNDY3MTR9.JmbGEcPxEm7blv5xytqyZqzHoJ-yWQJ6S3GKndog8Q0"
+let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6InJpY2hhcmQiLCJlbWFpbCI6InJpY2hhcmRAZ21haWwuY29tIiwicGhvbmVfbnVtYmVyIjoiMDg1MTM4Mzg0NzUiLCJnZW5kZXIiOnRydWUsInRpcGUiOjEsImNyZWF0ZWRfYXQiOiIyMDIwLTA1LTIyVDEzOjIzOjU0LjAwMFoiLCJ1cGRhdGVkX2F0IjoiMjAyMC0wNS0yM1QwNzowMzo1Mi4wMDBaIiwiaWF0IjoxNTkwMjE4OTg3LCJleHAiOjE1OTAzMDUzODd9.UOT-UwmdMWTpvF1KWqZx0p4sUg1PN8pTYFtm-A27vZY"
 
 describe('Game Test', function () {
     it('Response should be when game inserted', function (done) {

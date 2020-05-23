@@ -9,11 +9,16 @@ const model = require('../models/index');
 const { check, validationResult } = require('express-validator');
 
 router.post('/',[
+    customMiddleware.jwtMiddleware,
     check('name').isString(),
   ],async function(req, res, next) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(httpCode.VALIDATION_FAIL).json({ errors: errors.array() });
+    }
+    console.log(req.user_auth.tipe)
+    if (req.user_auth.tipe!==3){
+      return res.status(httpCode.FORBIDDEN).json({ errors: "User bukan admin"})
     }
     try {
       const genres = await model.genres.create(req.body);
@@ -68,7 +73,17 @@ router.get('/:id', async function (req, res, next) {
   }
 });
 
-router.patch('/:id', async function (req, res, next) {
+router.patch('/:id',[
+  customMiddleware.jwtMiddleware,
+  check('name').isString(),
+  ], async function (req, res, next) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(httpCode.VALIDATION_FAIL).json({ errors: errors.array() });
+  }
+  if (req.user_auth.tipe!==3){
+    return res.status(httpCode.FORBIDDEN).json({ errors: "User bukan admin"})
+  }
   try {
     const genreId = req.params.id;
     const name = req.body.name;
@@ -79,11 +94,12 @@ router.patch('/:id', async function (req, res, next) {
         id: genreId
       }
     });
+    const genre = await model.genres.findOne({where:{id:genreId}})
     if (genres) {
       res.json({
         'status': 'OK',
         'message': 'Genre berhasil diupdate',
-        'data': genres,
+        'data': genre,
       })
     }
   } catch (err) {
@@ -94,9 +110,19 @@ router.patch('/:id', async function (req, res, next) {
   }
 });
 
-router.delete('/:id', async function (req, res, next) {
+router.delete('/:id', [
+  customMiddleware.jwtMiddleware,
+  ] ,async function (req, res, next) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(httpCode.VALIDATION_FAIL).json({ errors: errors.array() });
+  }
+  if (req.user_auth.tipe!==3){
+    return res.status(httpCode.FORBIDDEN).json({ errors: "User bukan admin"})
+  }
   try {
     const genreId = req.params.id;
+    const genre = await model.genres.findOne({ where:{id:genreId}})
     const genres = await model.genres.destroy({ where: {
       id: genreId
     }})
@@ -104,7 +130,7 @@ router.delete('/:id', async function (req, res, next) {
       res.json({
         'status': 'OK',
         'message': 'Genre berhasil dihapus',
-        'data': genres,
+        'data': genre,
       })
     }
   } catch (err) {
