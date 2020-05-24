@@ -19,58 +19,70 @@
 | Review + list endpoint | Sandy   |
 | Genre + game           | Richard |
 
+## List participant
+
+| Participant Type | Level                   | Description                 |
+| ---------------- | ----------------------- | --------------------------- |
+| All              | -                       | No authentication           |
+| It's user        | Depends on user's level | Resorce created by the user |
+| Basic            | 1                       | 1000 requests/month, $0     |
+| Pro              | 2                       | unlimited requests, $30     |
+| Admin            | 3                       | Can do everything           |
+
 ## Daftar endpoint
+
+Catatan :Endpoint dan Participant mungkin terjadi perubahan kecil
 
 ### User resource
 
-| Method | Endpoint  | Deskripsi                  | Participant |
-| ------ | --------- | -------------------------- | ----------- |
-| POST   | /register | Register user              |             |
-| POST   | /login    | Login user (get JWT token) |             |
-| GET    | /user     | GET users                  |             |
-| GET    | /user/:id | GET user                   |             |
-| PUT    | /user/:id | PUT user                   | It's user   |
-| DELETE | /user/:id | DELETE user                | Admin       |
+| Method | Endpoint   | Deskripsi                  | Participant |
+| ------ | ---------- | -------------------------- | ----------- |
+| POST   | /register  | Register user              | All         |
+| POST   | /login     | Login user (get JWT token) | All         |
+| GET    | /users     | GET users                  | All         |
+| GET    | /users/:id | GET user                   | All         |
+| PATCH  | /users/:id | PUT user                   | It's user   |
+| DELETE | /users/:id | DELETE user                | It's user   |
 
 ### Game list resource
 
-| Method | Endpoint           | Deskripsi             | Participant |
-| ------ | ------------------ | --------------------- | ----------- |
-| POST   | /user/:id/game     | POST user game list   |             |
-| GET    | /user/:id/game     | GET user game list    |             |
-| PUT    | /user/:id/game/:id | PUT user game list    | It's user   |
-| DELETE | /user/:id/game/:id | DELETE user game list | It's user   |
+| Method | Endpoint              | Deskripsi             | Participant |
+| ------ | --------------------- | --------------------- | ----------- |
+| POST   | /user/game            | POST user game list   | Basic       |
+| GET    | /user/:id_user/game   | GET user game list    | It's user   |
+| DELETE | /user/game/:id_game   | DELETE user game list | It's user   |
+| GET    | /user/:id_user/review | GET user review list  | All         |
 
 ### Review resource
 
-| Method | Endpoint         | Deskripsi            | Participant      |
-| ------ | ---------------- | -------------------- | ---------------- |
-| POST   | /review          | POST review          |                  |
-| GET    | /review          | GET reviews          |                  |
-| GET    | /review/:id      | GET review           |                  |
-| GET    | /user/:id/review | GET user review list |                  |
-| PUT    | /review/:id      | PUT review           | It's user        |
-| DELETE | /review/:id      | DELETE review        | Admin, it's user |
+| Method | Endpoint    | Deskripsi     | Participant |
+| ------ | ----------- | ------------- | ----------- |
+| POST   | /review     | POST review   | Basic       |
+| GET    | /review     | GET reviews   | All         |
+| GET    | /review/:id | GET review    | All         |
+| PATCH  | /review/:id | PATCH review  | It's user   |
+| DELETE | /review/:id | DELETE review | It's user   |
 
 ### Game resource
 
-| Method | Endpoint  | Deskripsi                               | Participant |
-| ------ | --------- | --------------------------------------- | ----------- |
-| GET    | /game     | GET games list (with optional param q=) |             |
-| GET    | /game/:id | GET game detail                         |             |
+| Method | Endpoint  | Deskripsi                          | Participant |
+| ------ | --------- | ---------------------------------- | ----------- |
+| POST   | /game     | POST games                         | Pro         |
+| GET    | /game     | GET games (with optional param q=) | All         |
+| GET    | /game/:id | GET game detail                    | All         |
 
 ### Genre resource
 
 | Method | Endpoint   | Deskripsi                           | Participant |
 | ------ | ---------- | ----------------------------------- | ----------- |
-| POST   | /genre     | POST genre                          | Admin       |
-| GET    | /genre     | GET genres (with optional param q=) |             |
-| GET    | /genre/:id | GET genre                           |             |
-| PUT    | /genre/:id | PUT genre                           | Admin       |
-| DELETE | /genre/:id | DELETE genre                        | Admin       |
+| POST   | /genre     | POST genre                          | Pro         |
+| GET    | /genre     | GET genres (with optional param q=) | All         |
+| GET    | /genre/:id | GET genre                           | All         |
+| PATCH  | /genre/:id | PATCH genre                         | It's users  |
+| DELETE | /genre/:id | DELETE genre                        | It's users  |
 
 ### Endpoint lainnya
 
 | Method | Endpoint  | Deskripsi        | Participant |
 | ------ | --------- | ---------------- | ----------- |
-| GET    | /endpoint | list of endpoint |             |
+| GET    | /endpoint | list of endpoint | All         |
