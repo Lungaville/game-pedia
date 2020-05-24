@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var httpCode = require('../utils/http-code')
 var customValidation = require('../utils/custom_validation')
+var customMiddleware = require('../utils/custom_middleware')
 const {
     check,
     validationResult
@@ -44,6 +45,7 @@ router.get('/:id', [
 })
 
 router.post('/', [
+    customMiddleware.jwtMiddleware,
     check('id_game').notEmpty().isNumeric().custom(customValidation.gameExists),
     check('id_user').notEmpty().isNumeric().custom(customValidation.userExists),
     check('review').notEmpty().isString(),
@@ -88,6 +90,8 @@ router.post('/', [
 });
 
 router.patch('/:id', [
+    customMiddleware.jwtMiddleware,
+    // TO DO : Validate ownership, unless user type is admin
     check('id').custom(customValidation.reviewExist),
     check('review').notEmpty().isString(),
     check('review_score').notEmpty().isNumeric().custom(rating => {
@@ -134,6 +138,8 @@ router.patch('/:id', [
 });
 
 router.delete('/:id', [
+    customMiddleware.jwtMiddleware,
+    // TO DO : Validate ownership, unless user type is admin
     check('id').custom(customValidation.reviewExist),
 ], async (req, res, next) => {
     try {
