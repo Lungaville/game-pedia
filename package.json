@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "nodemon ./bin/www",
-    "test": "npx mocha 'tests/apiTests.js' --reporter mochawesome --exit --timeout 4000"
+    "test": "mocha 'tests/apiTests.js' 'tests/gameTests' 'tests/genreTests' mochawesome --exit --timeout 4000"
   },
   "dependencies": {
     "bcrypt": "^4.0.1",
@@ -15,6 +15,7 @@
     "http-errors": "^1.6.3",
     "jade": "~1.11.0",
     "jsonwebtoken": "^8.5.1",
+    "mocha": "^7.1.2",
     "morgan": "~1.9.1",
     "mysql2": "^2.1.0",
     "sequelize": "^5.21.8"

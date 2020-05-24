@@ -14,14 +14,14 @@ module.exports = {
       description: {
         type: Sequelize.STRING(1000),
       },
-      developer: {
-        type: Sequelize.STRING,
-      },
       image: {
         type: Sequelize.STRING,
       },
       genre: {
         type: Sequelize.STRING,
+      },
+      created_by: {
+        type: Sequelize.INTEGER,
       },
       created_at: {
         allowNull: false,
