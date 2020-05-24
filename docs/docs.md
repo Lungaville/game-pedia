@@ -14,8 +14,8 @@
 
 | Resource type          | User    |
 | ---------------------- | ------- |
-| User                   | Robby   |
-| User data + 3rd party  | Willy   |
+| User + Midtrans API    | Robby   |
+| User data + IGDB API   | Willy   |
 | Review + list endpoint | Sandy   |
 | Genre + game           | Richard |
 
