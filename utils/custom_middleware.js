@@ -37,12 +37,30 @@ function checkRole(role){
         next();
     }
 }
+
 var minimumBasic = checkRole(LEVELS.basic);
 var minimumPro = checkRole(LEVELS.pro);
 var minimumAdmin = checkRole(LEVELS.admin);
+
+let userReviewOwnership = async function (req, res, next) {
+    let id_review = req.params.id
+    let userReview = await model.users_reviews.findOne({where: {id: id_review} })
+
+    // assume token valid since this middleware run after jwtMiddleware
+    let user = await model.users.findOne({where: {token: req.header('Token')}})    
+    if (user === null || user.id !== userReview.id_user) {
+        return res.status(httpCode.UNAUTHORIZED).json({
+            'status': 'ERROR',
+            'message': `You are not owner of this resource`,
+        });
+    }
+    next();
+}
+
 module.exports = Object.freeze({
     jwtMiddleware: jwtMiddleware,
     minimumBasic: minimumBasic,
     minimumPro : minimumPro,
-    minimumAdmin: minimumAdmin
+    minimumAdmin: minimumAdmin,
+    userReviewOwnership: userReviewOwnership
 });
