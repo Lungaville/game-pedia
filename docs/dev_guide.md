@@ -101,3 +101,6 @@ sequelize db:migrate
 ```bash
 npm test
 ```
+
+## Deploy to heroku
+git push heroku
