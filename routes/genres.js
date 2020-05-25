@@ -10,6 +10,7 @@ const { check, validationResult } = require('express-validator');
 
 router.post('/',[
     customMiddleware.jwtMiddleware,
+    customMiddleware.minimumPro,
     check('name').isString(),
   ],async function(req, res, next) {
     const errors = validationResult(req);
@@ -17,9 +18,6 @@ router.post('/',[
       return res.status(httpCode.VALIDATION_FAIL).json({ errors: errors.array() });
     }
     console.log(req.user_auth.tipe)
-    if (req.user_auth.tipe!==3){
-      return res.status(httpCode.FORBIDDEN).json({ errors: "User bukan admin"})
-    }
     try {
       const genres = await model.genres.create(req.body);
       if (genres) {
@@ -75,14 +73,12 @@ router.get('/:id', async function (req, res, next) {
 
 router.patch('/:id',[
   customMiddleware.jwtMiddleware,
+  customMiddleware.minimumPro,
   check('name').isString(),
   ], async function (req, res, next) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(httpCode.VALIDATION_FAIL).json({ errors: errors.array() });
-  }
-  if (req.user_auth.tipe!==3){
-    return res.status(httpCode.FORBIDDEN).json({ errors: "User bukan admin"})
   }
   try {
     const genreId = req.params.id;
@@ -112,13 +108,11 @@ router.patch('/:id',[
 
 router.delete('/:id', [
   customMiddleware.jwtMiddleware,
+  customMiddleware.minimumPro,
   ] ,async function (req, res, next) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(httpCode.VALIDATION_FAIL).json({ errors: errors.array() });
-  }
-  if (req.user_auth.tipe!==3){
-    return res.status(httpCode.FORBIDDEN).json({ errors: "User bukan admin"})
   }
   try {
     const genreId = req.params.id;

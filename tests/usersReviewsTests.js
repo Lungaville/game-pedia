@@ -13,10 +13,13 @@ let review_score = 9
 let review_update = 'One of best Indie games of all time. The gameplay never gets boring and there\'s story mode which is quite interesting. The game is continuously improving and the developer is going as far remake first 2 episode after harsh critique. GOTY!'
 let review_score_update = 10
 
-let token = "x" // hard-coded
+let token; // hard-coded
 let id = null // ID of resource from GET request
 
 describe('Users Reviews Test', function () {
+    before(function() {
+        token = global.tokenBasic;
+    });
     it('Response should be when user review inserted', function (done) {
         request(app)
             .post('/reviews')

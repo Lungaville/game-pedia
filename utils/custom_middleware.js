@@ -28,7 +28,7 @@ var jwtMiddleware = async function(req, res, next) {
 
 function checkRole(role){
     return function(req, res, next) {
-        if(!res.locals.user.tipe  <role.value ){
+        if(req.user_auth.tipe  <role.value ){
             return res.status(httpCode.FORBIDDEN).json({
                 'status': 'ERROR',
                 'message': `Minimum ${role.name} to use this endpoint `,
