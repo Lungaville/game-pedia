@@ -38,6 +38,12 @@ var unexpectedError = (res,message) =>{
         'message' : message
     })
 }
+var forbiddenAccess = (res,message) =>{
+    return res.status(httpCode.FORBIDDEN).json({
+        'status' : 'FORBIDDEN',
+        'message' : message
+    })
+}
 
 module.exports = Object.freeze({
     notFound: responseNotFound,
@@ -45,5 +51,6 @@ module.exports = Object.freeze({
     insert: insertResponseCode,
     delete : deleteResponseCode,
     unexpectedError : unexpectedError,
+    forbidden : forbiddenAccess,
     get : getResponse
 });
