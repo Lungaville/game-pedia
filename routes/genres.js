@@ -54,9 +54,10 @@ router.get('/',async function(req, res, next) {
 router.get('/:id', async function (req, res, next) {
   try {
     const genreId = req.params.id;
-    const genre = await model.genres.findOne({ where: {
-      id: genreId
-    }})
+    const genre = await model.genres.findOne({ 
+      where: { id: genreId },
+      attributes: { exclude: ["updated_at", "created_at"]}
+    })
     if (genre) {
       res.json({
         'status': 'OK',
@@ -90,7 +91,10 @@ router.patch('/:id',[
         id: genreId
       }
     });
-    const genre = await model.genres.findOne({where:{id:genreId}})
+    const genre = await model.genres.findOne({
+      where:{id:genreId},
+      attributes: { exclude: ["updated_at", "created_at"]}
+    })
     if (genres) {
       res.json({
         'status': 'OK',
@@ -116,15 +120,26 @@ router.delete('/:id', [
   }
   try {
     const genreId = req.params.id;
-    const genre = await model.genres.findOne({ where:{id:genreId}})
+    const genre = await model.genres.findOne({ 
+      where:{id:genreId},
+      attributes: { exclude: ["updated_at", "created_at"]}
+    })
     const genres = await model.genres.destroy({ where: {
       id: genreId
     }})
-    if (genres) {
+    const foreignGenres = await model.genre_games.destroy({ where : {
+      id_genre: genreId
+    }})
+    if (genres || foreignGenres) {
       res.json({
         'status': 'OK',
         'message': 'Genre berhasil dihapus',
         'data': genre,
+      })
+    }else{
+      res.json({
+        'status': 'Error',
+        'message': 'Something error in server'
       })
     }
   } catch (err) {

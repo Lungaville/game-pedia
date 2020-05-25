@@ -3,12 +3,31 @@ var router = express.Router();
 var httpCode = require("../utils/http-code");
 var customValidation = require("../utils/custom_validation");
 var customMiddleware = require("../utils/custom_middleware");
+var multer = require("multer")
 const model = require("../models/index");
 
 const { check, validationResult } = require("express-validator");
 
+const storage = multer.diskStorage({
+  destination: (req, file, callback) => {
+    callback(null, "./images");
+  },
+  filename: (req, file, callback) => {
+    const filename = file.originalname.split(".");
+    const extension = filename[1];
+    const filetypes= /jpeg|jpg|png/;
+    const mimetype=filetypes.test(file.mimetype);
+    if(mimetype)callback(null, Date.now() + "." + extension);
+    else callback('Error: Image Only')
+  }
+});
+const upload = multer({
+  storage: storage
+});
+
 router.post(
   "/",
+  upload.single("photo"),
   [
     customMiddleware.jwtMiddleware,
     check("name").isString(),
@@ -17,16 +36,18 @@ router.post(
   ],
   async function (req, res, next) {
     const errors = validationResult(req);
-    const body = {...req.body,created_by:parseInt(req.user_auth.id)}
-    console.log(body)
+    const body = {
+      ...req.body,
+      created_by:parseInt(req.user_auth.id),
+      image:(req.file.path).replace("images\\","")
+    }
     if (!errors.isEmpty()) {
       return res
         .status(httpCode.VALIDATION_FAIL)
         .json({ errors: errors.array() });
     }
     try {
-      console.log({...req.body,created_by:parseInt(req.user_auth.id)})
-      const queryGames = await model.games.create({...req.body,created_by:parseInt(req.user_auth.id)});
+      const queryGames = await model.games.create(body);
       const game = await model.games.findOne({
         where: {
           id: queryGames.id,
