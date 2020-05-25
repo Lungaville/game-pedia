@@ -5,8 +5,19 @@ const assert = require('chai').assert;
 const expect = require('chai').expect;
 const jwt = require('jsonwebtoken');
 const fakeData= require('./global');
+const model = require('../models/index');
 
 describe('Testing registration for all user role', function () {
+    
+    before(async function() {
+        console.log("Deleting Seed Data");
+        const usersBasic = await model.users.destroy({
+            truncate: true, where :  {email : fakeData.user.basic.email}});
+        const usersPro = await model.users.destroy({ 
+            truncate: true,where :  {email : fakeData.user.basic.email}});
+        const usersAdmin = await model.users.destroy({ 
+            truncate: true,where :  {email : fakeData.user.basic.email}});
+    });
     it(`Register using basic user with email : ${fakeData.user.basic.email}`, function (done) {
         request(app)
             .post('/register')

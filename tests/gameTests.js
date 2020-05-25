@@ -28,6 +28,7 @@ describe('Game Test', function () {
             // .expect(responseCode.SUCCESS_INSERT)
             .expect(response => {
                 insertedId= response.body.data.id;
+                global.seed_id_game = insertedId;
                 expect(response.body.message).to.equal('Game berhasil ditambahkan','Response message tidak sesuai');
                 expect(response.body.data.description).to.equal(description,'Description yang diberikan pada response tidak sesuai')
                 expect(response.body.data.genre).to.equal(genre,'Genre yang diberikan pada resposne tidak sesuai');

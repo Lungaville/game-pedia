@@ -5,7 +5,7 @@ const assert = require('chai').assert;
 const expect = require('chai').expect;
 const jwt = require('jsonwebtoken')
 
-let id_game = 2
+let id_game;
 let id_user = 1
 let review = 'One of best Indie games of all time. The gameplay never gets boring and there\'s story mode which is quite interesting. The game is continuously improving and the developer is going as far remake first 2 episode after harsh critique. Just buy this game!'
 let review_score = 9
@@ -18,6 +18,7 @@ let id = null // ID of resource from GET request
 
 describe('Users Reviews Test', function () {
     before(function() {
+        id_game =  global.seed_id_game;
         token = global.tokenBasic;
     });
     it('Response should be when user review inserted', function (done) {
