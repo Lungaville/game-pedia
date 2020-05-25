@@ -8,7 +8,7 @@ const model = require('../models/index');
 const { check, validationResult } = require('express-validator');
 
 /* GET users listing. */
-router.get('/',[customMiddleware.jwtMiddleware,customMiddleware.minimumPro] ,async function(req, res, next) {
+router.get('/',[customMiddleware.jwtMiddleware,customMiddleware.minimumAdmin] ,async function(req, res, next) {
   const users = await model.users.findAll({});
   // console.log(res.locals.user);
   return res.json({

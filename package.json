@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon ./bin/www",
-    "test": "mocha 'tests/apiTests.js' 'tests/gameTests' 'tests/genreTests' 'tests/usersReviewsTests' --reporter mochawesome --exit --timeout 4000"
+    "start": "node ./bin/www",
+    "test": "mocha 'tests/auth_test.js' 'tests/game_test' 'tests/genre_test' 'tests/user_review_test' 'tests/user_game_test' --reporter mochawesome --exit --timeout 4000"
   },
   "dependencies": {
     "bcrypt": "^4.0.1",
@@ -19,6 +19,8 @@
     "morgan": "~1.9.1",
     "multer": "^1.4.2",
     "mysql2": "^2.1.0",
+    "pg": "^8.2.1",
+    "pg-hstore": "^2.3.3",
     "sequelize": "^5.21.8"
   },
   "devDependencies": {

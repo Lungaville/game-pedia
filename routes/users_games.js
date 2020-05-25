@@ -22,14 +22,17 @@ function checkUserGameUnique(id_user, id_game) {
   });
 }
 router.post(
-  "/game",
-  [customMiddleware.jwtMiddleware, check("id_game").isNumeric()],
+  "/:id_user/game",
+  [customMiddleware.jwtMiddleware, check("id_game").isNumeric(),check("id_user").isNumeric()],
   async function (req, res, next) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res
         .status(httpCode.VALIDATION_FAIL)
         .json({ errors: errors.array() });
+    }
+    if(req.user_auth.tipe != 3 && req.user_auth.id != req.params.id_user){
+      return response.forbidden(res, "You don't have enough access to this resource");
     }
 
     if ((await checkGameExists(req.body.id_game)) == null) {
@@ -42,7 +45,7 @@ router.post(
     }
     try {
       const data = {
-        id_user: req.user_auth.id,
+        id_user: parseInt(req.params.id_user) ,
         id_game: req.body.id_game,
       };
       const user_game = await model.users_games.create(data, {
@@ -105,7 +108,7 @@ router.get(
 );
 
 router.delete(
-  "/game/:id_game",
+  "/:id_user/game/:id_game",
   [customMiddleware.jwtMiddleware, check("id_game").isNumeric()],
   async function (req, res, next) {
     const errors = validationResult(req);
@@ -118,9 +121,12 @@ router.delete(
     if ((await checkGameExists(req.params.id_game)) == null) {
       return response.notFound(res, "Game not found");
     }
+    if(req.user_auth.tipe != 3 && req.user_auth.id != req.params.id_user){
+      return response.forbidden(res, "You don't have enough access to this resource");
+    }
     try {
       const data = {
-        id_user: req.user_auth.id,
+        id_user: req.params.id_user,
         id_game: req.params.id_game,
       };
       let user_game = await model.users_games.findOne({ where: data });

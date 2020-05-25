@@ -46,6 +46,7 @@ router.get('/:id', [
 
 router.post('/', [
     customMiddleware.jwtMiddleware,
+    customMiddleware.minimumBasic,
     check('id_game').notEmpty().isNumeric().custom(customValidation.gameExists),
     check('id_user').notEmpty().isNumeric().custom(customValidation.userExists),
     check('review').notEmpty().isString(),
@@ -91,6 +92,7 @@ router.post('/', [
 
 router.patch('/:id', [
     customMiddleware.jwtMiddleware,
+    customMiddleware.userReviewOwnership,
     // TO DO : Validate ownership, unless user type is admin
     check('id').custom(customValidation.reviewExist),
     check('review').notEmpty().isString(),
@@ -109,7 +111,7 @@ router.patch('/:id', [
         });
     }
     try {
-        const id = req.params.id;        
+        const id = req.params.id;
         const {
             review,
             review_score
@@ -139,6 +141,7 @@ router.patch('/:id', [
 
 router.delete('/:id', [
     customMiddleware.jwtMiddleware,
+    customMiddleware.userReviewOwnership,
     // TO DO : Validate ownership, unless user type is admin
     check('id').custom(customValidation.reviewExist),
 ], async (req, res, next) => {
