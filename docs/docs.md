@@ -21,13 +21,13 @@
 
 ## List participant
 
-| Participant Type | Level                   | Description                 |
-| ---------------- | ----------------------- | --------------------------- |
-| All              | -                       | No authentication           |
-| It's user        | Depends on user's level | Resorce created by the user |
-| Basic            | 1                       | 1000 requests/month, $0     |
-| Pro              | 2                       | unlimited requests, $30     |
-| Admin            | 3                       | Can do everything           |
+| Participant Type | Level                          | Description                        |
+| ---------------- | ------------------------------ | ---------------------------------- |
+| All              | -                              | No authentication                  |
+| It's participant | Depends on participant's level | Resorce created by the participant |
+| Basic            | 1                              | $0                                 |
+| Pro              | 2                              | $30 / month                        |
+| Admin            | 3                              | Can do everything                  |
 
 ## Daftar endpoint
 
