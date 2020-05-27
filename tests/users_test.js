@@ -106,6 +106,15 @@ describe('Users Reviews Test', function () {
             .expect(responseCode.OK)
             .end(done);
     });
+    it('/user/:id_user deleted user should return 404', function (done) {
+        request(app)
+            .get(`/users/${idUserBasic}`)
+            .set('Accept', 'application/json')
+            .set('token', tokenAdmin)
+            .expect('Content-Type', /json/)
+            .expect(responseCode.NOT_FOUND)
+            .end(done);
+    });
     
     it('DELETE /user/:id_user Admin delete pro user', function (done) {
         request(app)
