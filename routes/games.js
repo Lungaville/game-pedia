@@ -36,10 +36,11 @@ router.post(
   ],
   async function (req, res, next) {
     const errors = validationResult(req);
+    const image = req.file == undefined ? null : (req.file.path).replace("images\\","")
     const body = {
       ...req.body,
       created_by:parseInt(req.user_auth.id),
-      image:(req.file.path).replace("images\\","")
+      image: image
     }
     if (!errors.isEmpty()) {
       return res
