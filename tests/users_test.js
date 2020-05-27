@@ -13,7 +13,7 @@ let idUserAdmin;
 let editedName;
 let editedGender;
 
-describe('Users Reviews Test', function () {
+describe('Users CRUD Test', function () {
     before(function() {
         tokenBasic = global.tokenBasic;
         idUserBasic = global.userBasic.id;
