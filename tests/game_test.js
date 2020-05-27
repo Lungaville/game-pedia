@@ -21,11 +21,11 @@ describe('Game Test', function () {
     it('Response should be when game inserted', function (done) {
         request(app)
             .post('/games')
-            .send({name :gameName , description : description, genre: genre})
+            .send({name :gameName , description : description, genre: genre, image:null})
             .set('Accept', 'application/json')
             .set('Token',token)
-            // .expect('Content-Type', /json/)
-            // .expect(responseCode.SUCCESS_INSERT)
+            .expect('Content-Type', /json/)
+            .expect(responseCode.SUCCESS_INSERT)
             .expect(response => {
                 insertedId= response.body.data.id;
                 global.seed_id_game = insertedId;
