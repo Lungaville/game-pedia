@@ -4,7 +4,6 @@ module.exports ={
             email : 'basic@gmail.com',
             password: 'basic123',
             name : 'test-basic',
-            phone_number : '231293123',
             gender : 1,
             tipe : 1,
         },
@@ -12,7 +11,6 @@ module.exports ={
             email : 'pro@gmail.com',
             password: 'pro123',
             name : 'test-pro',
-            phone_number : '28371278',
             gender : 1,
             tipe : 2,
         },
@@ -20,7 +18,6 @@ module.exports ={
             email : 'admin@gmail.com',
             password: 'admin123',
             name : 'test-admin',
-            phone_number : '71261712',
             gender : 1,
             tipe : 3,
         }

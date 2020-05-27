@@ -11,7 +11,6 @@ router.post('/register',[
     check('email').isEmail(),
     check('password').isLength({min : 5 , max : 15}),
     check('gender').isNumeric(),
-    check('phone_number').isString(),
     check('tipe').isNumeric(),
   ],async function(req, res, next) {
     const errors = validationResult(req);

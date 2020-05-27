@@ -5,30 +5,31 @@ var customValidation = require('../utils/custom_validation')
 var customMiddleware = require('../utils/custom_middleware')
 const model = require('../models/index');
 
+var response = require("../utils/response_function");
 const { check, validationResult } = require('express-validator');
 
 /* GET users listing. */
-router.get('/',[customMiddleware.jwtMiddleware,customMiddleware.minimumAdmin] ,async function(req, res, next) {
+router.get('/',[customMiddleware.jwtMiddleware] ,async function(req, res, next) {
   const users = await model.users.findAll({});
   // console.log(res.locals.user);
-  return res.json({
-    'status': 'OK',
-    'message': '',
-    'data': users
-  })
+  return response.get(res,'',users);
 });
 
-router.get('/:id', async function(req, res, next) {
+router.get('/:id', [customMiddleware.jwtMiddleware],async function(req, res, next) {
   try {
     const userId = req.params.id;
-    const user = await model.users.findOne({ where: {
-      id: userId
+    const user = await model.users.findOne({ 
+    where: {
+      id: userId,
     }})
+    console.log(user);
+    console.log('tes');
     if (user) {
-      res.json({
-        'status': 'OK',
-        'data': user,
-      })
+      console.log('tes');
+      return response.get(res,'',user);
+    }
+    else{
+      return response.notFound(res,'User tidak ditemukan');
     }
   } catch (err) {
     res.status(400).json({
@@ -38,31 +39,27 @@ router.get('/:id', async function(req, res, next) {
   }
 });
 
-router.patch('/:id', async function (req, res, next) {
+router.patch('/:id', [customMiddleware.jwtMiddleware],async function (req, res, next) {
   try {
+    if(req.user_auth.tipe != 3 && req.user_auth.id != req.params.id){
+      return response.forbidden(res, "You don't have enough access to this resource");
+    }
+
     const usersId = req.params.id;
-    const {
-      name,
-      email,
-      gender,
-      phoneNumber
-    } = req.body;
+    const gender = req.body.gender;
+    const name = req.body.name;
+
     const users = await model.users.update({
       name,
-      email,
       gender,
-      phone_number: phoneNumber
     }, {
       where: {
         id: usersId
       }
     });
     if (users) {
-      res.json({
-        'status': 'OK',
-        'message': 'User berhasil diupdate',
-        'data': users,
-      })
+      console.log(users);
+      return response.update(res,'User berhasil diupdate');
     }
   } catch (err) {
     res.status(400).json({
@@ -72,18 +69,15 @@ router.patch('/:id', async function (req, res, next) {
   }
 });
 
-router.delete('/:id', async function (req, res, next) {
+router.delete('/:id', [customMiddleware.jwtMiddleware,customMiddleware.minimumAdmin],async function (req, res, next) {
+
   try {
     const usersId = req.params.id;
     const users = await model.users.destroy({ where: {
       id: usersId
     }})
     if (users) {
-      res.json({
-        'status': 'OK',
-        'message': 'User berhasil dihapus',
-        'data': users,
-      })
+      return response.delete(res,'User berhasil dihapus',users);
     }
   } catch (err) {
     res.status(400).json({

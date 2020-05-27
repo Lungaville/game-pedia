@@ -32,6 +32,13 @@ var getResponse = (res,message,data) =>{
         'data' : data
     })
 }
+
+var updateResponse = (res,message) =>{
+    return res.status(httpCode.OK).json({
+        'status' : 'OK',
+        'message' : message
+    })
+}
 var unexpectedError = (res,message) =>{
     return res.status(httpCode.BAD_REQUEST).json({
         'status' : 'BAD_REQUEST',
@@ -52,5 +59,6 @@ module.exports = Object.freeze({
     delete : deleteResponseCode,
     unexpectedError : unexpectedError,
     forbidden : forbiddenAccess,
+    update: updateResponse,
     get : getResponse
 });
