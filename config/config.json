@@ -8,19 +8,13 @@
     "logging" : false,
     "operatorsAliases": false
   },
-  "production": {
-    "username": "ymkbbdaysemypp",
-    "password": "3eafa4072ef0db2bde49d36343f84f0a3bb3294fbf4e1e03641987545c499ab3",
-    "database": "d7nr3qu32einle",
-    "port" : "5432",
-    "host": "ec2-3-222-150-253.compute-1.amazonaws.com",
+  "production": {        
+    "use_env_variable": "DATABASE_URL",
     "dialect": "postgres",
-    "logging" : false,
     "dialectOptions": {
-        "ssl": true,
-        "rejectUnauthorized": false
-    },
-    "operatorsAliases": false
+        "ssl": true
+    }
+
   },
   "test": {
     "username": "root",
