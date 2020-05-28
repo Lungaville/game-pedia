@@ -107,6 +107,33 @@ router.get(
   }
 );
 
+router.get(
+  "/:id_user/reviews",
+  [customMiddleware.jwtMiddleware, check("id_user").isNumeric()],
+  async function (req, res, next) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res
+          .status(httpCode.VALIDATION_FAIL)
+          .json({ errors: errors.array() });
+      }
+
+      if ((await checkUserExists(req.params.id_user)) == null) {
+        return response.notFound(res, "User not found");
+      }
+      let whereParam =  {};
+      whereParam.id_user= req.params.id_user;
+      if(req.query.id_game!=undefined)  whereParam.id_game = req.query.id_game;
+      const user_games = await model.users_reviews.findAll({
+        where: whereParam,
+      });
+      return response.get(res, "", user_games);
+    } catch (err) {
+      return response.unexpectedError(res, err.message);
+    }
+  }
+);
 router.delete(
   "/:id_user/game/:id_game",
   [customMiddleware.jwtMiddleware, check("id_game").isNumeric()],

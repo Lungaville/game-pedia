@@ -31,7 +31,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/games', gamesRouter);
 app.use('/genres', genresRouter);
-app.use('/user', usersGamesRouter);
+app.use('/users', usersGamesRouter);
 app.use('/reviews', usersReviewsRouter);
 
 // catch 404 and forward to error handler

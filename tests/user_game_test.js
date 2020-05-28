@@ -23,7 +23,7 @@ describe('Users Reviews Test', function () {
     });
     it('Basic User can insert user game', function (done) {
         request(app)
-            .post(`/user/${idUserBasic}/game`)
+            .post(`/users/${idUserBasic}/game`)
             .send({
                 id_game: id_game,
                 id_user: idUserBasic,
@@ -41,7 +41,7 @@ describe('Users Reviews Test', function () {
     });
     it('Admin can insert other user game', function (done) {
         request(app)
-            .post(`/user/${idUserPro}/game`)
+            .post(`/users/${idUserPro}/game`)
             .send({
                 id_game: id_game,
                 id_user: idUserPro,
@@ -59,7 +59,7 @@ describe('Users Reviews Test', function () {
     });
     it('GET all user games should contain inserted', function (done) {
       request(app)
-          .get(`/user/${idUserBasic}/game`)
+          .get(`/users/${idUserBasic}/game`)
           .set('token', tokenBasic)
           .set('Accept', 'application/json')
           .expect('Content-Type', /json/)
@@ -73,7 +73,7 @@ describe('Users Reviews Test', function () {
     
     it('Basic User can delete game', function (done) {
         request(app)
-            .delete(`/user/${idUserBasic}/game/${id_game}`)
+            .delete(`/users/${idUserBasic}/game/${id_game}`)
             .set('Accept', 'application/json')
             .set('token', tokenBasic)
             .expect('Content-Type', /json/)
@@ -86,7 +86,7 @@ describe('Users Reviews Test', function () {
     
     it('User game should be deleted', function (done) {
         request(app)
-            .get(`/user/${idUserBasic}/game`)
+            .get(`/users/${idUserBasic}/game`)
             .set('token', tokenAdmin)
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
@@ -100,7 +100,7 @@ describe('Users Reviews Test', function () {
       
     it('Admin can delete other user game', function (done) {
         request(app)
-            .delete(`/user/${idUserPro}/game/${id_game}`)
+            .delete(`/users/${idUserPro}/game/${id_game}`)
             .set('Accept', 'application/json')
             .set('token', tokenAdmin)
             .expect('Content-Type', /json/)
@@ -113,7 +113,7 @@ describe('Users Reviews Test', function () {
     
     it('User game should be deleted', function (done) {
         request(app)
-            .get(`/user/${idUserPro}/game`)
+            .get(`/users/${idUserPro}/game`)
             .set('token', tokenBasic)
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)

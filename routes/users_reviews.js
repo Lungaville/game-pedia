@@ -8,6 +8,7 @@ const {
     validationResult
 } = require('express-validator');
 const model = require('../models/index');
+var response = require("../utils/response_function");
 
 /* GET reviews  */
 router.get('/', async (req, res, next) => {
@@ -29,12 +30,15 @@ router.get('/:id', [
                 'id': req.params.id
             }
         });
-        console.log(res.locals.review);
+        if(review !=null)
         return res.json({
             'status': 'OK',
             'message': '',
             'data': review
         })
+        else{
+            return response.notFound(res,"Review tidak ditemukan");
+        }
     } catch (err) {
         res.status(400).json({
             'status': 'ERROR',
@@ -65,6 +69,9 @@ router.post('/', [
         });
     }
     try {
+    if(req.user_auth.tipe != 3 && parseInt(req.user_auth.id)  != parseInt(req.body.id_user) ){
+        return response.forbidden(res, "You don't have enough access to this resource");
+      }
         const data = {
             id_game: req.body.id_game,
             id_user: req.body.id_user,
@@ -94,7 +101,7 @@ router.patch('/:id', [
     customMiddleware.jwtMiddleware,
     customMiddleware.userReviewOwnership,
     // TO DO : Validate ownership, unless user type is admin
-    check('id').custom(customValidation.reviewExist),
+    check('id'),
     check('review').notEmpty().isString(),
     check('review_score').notEmpty().isNumeric().custom(rating => {
         if (rating < 1 || rating > 10) {
@@ -111,6 +118,19 @@ router.patch('/:id', [
         });
     }
     try {
+        
+        const selectReview= await model.users_reviews.findOne({
+            where: {
+                'id': req.params.id
+            }
+        });
+        if(selectReview==null){
+            return response.notFound(res,'Review tidak ditemukan')
+        }
+        if(req.user_auth.tipe != 3 && req.user_auth.id != selectReview.id_user ){
+            return response.forbidden(res,'Tidak bisa mengedit review orang lain')
+        }
+        
         const id = req.params.id;
         const {
             review,
@@ -146,6 +166,17 @@ router.delete('/:id', [
     check('id').custom(customValidation.reviewExist),
 ], async (req, res, next) => {
     try {
+        const selectReview= await model.users_reviews.findOne({
+            where: {
+                'id': req.params.id
+            }
+        });
+        if(selectReview==null){
+            return response.notFound(res,'Review tidak ditemukan')
+        }
+        if(req.user_auth.tipe != 3 && req.user_auth.id != selectReview.id_user ){
+            return response.forbidden(res,'Tidak bisa mengedit review orang lain')
+        }
         const id = req.params.id;
         const user_review = await model.users_reviews.destroy({
             where: {
