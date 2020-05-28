@@ -6,6 +6,9 @@ module.exports = (sequelize, DataTypes) => {
     {
       id_game: DataTypes.INTEGER,
       id_user: DataTypes.INTEGER,
+      tipe: DataTypes.INTEGER,
+      complete_time: DataTypes.TIME,
+      photo : DataTypes.STRING
     },
     {
       updatedAt: "updated_at",

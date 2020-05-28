@@ -18,7 +18,7 @@ var jwtMiddleware = async function(req, res, next) {
     let user = await model.users.findOne({ where : {token : req.header('Token') }})
     if(user == null){  
         return res.status(httpCode.UNAUTHORIZED).json({
-            'status': 'ERROR',
+            'status': 'UNAUTHORIZED',
             'message': `Invalid Token`,
         });
     }
@@ -30,7 +30,7 @@ function checkRole(role){
     return function(req, res, next) {
         if(req.user_auth.tipe  <role.value ){
             return res.status(httpCode.FORBIDDEN).json({
-                'status': 'ERROR',
+                'status': 'FORBIDDEN',
                 'message': `Minimum ${role.name} to use this endpoint `,
                 });
         }

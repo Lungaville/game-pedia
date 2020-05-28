@@ -6,7 +6,23 @@ var httpCode = require("../utils/http-code");
 const model = require("../models/index");
 var customMiddleware = require("../utils/custom_middleware");
 var response = require("../utils/response_function");
-
+const multer = require("multer");
+const storage = multer.diskStorage({
+  destination: (req, file, callback) => {
+    callback(null, "./images");
+  },
+  filename: (req, file, callback) => {
+    const filename = file.originalname.split(".");
+    const extension = filename[1];
+    const filetypes= /jpeg|jpg|png/;
+    const mimetype=filetypes.test(file.mimetype);
+    if(mimetype)callback(null, Date.now() + "." + extension);
+    else callback('Error: Image Only')
+  }
+});
+const upload = multer({
+  storage: storage
+});
 const { check, validationResult } = require("express-validator");
 
 function checkGameExists(id_game) {
@@ -15,7 +31,9 @@ function checkGameExists(id_game) {
 function checkUserExists(id_user) {
   return model.users.findOne({ where: { id: id_user } });
 }
-
+function isNumeric(value) {
+  return /^-{0,1}\d+$/.test(value);
+}
 function checkUserGameUnique(id_user, id_game) {
   return model.users_games.findOne({
     where: { id_user: id_user, id_game: id_game },
@@ -23,9 +41,36 @@ function checkUserGameUnique(id_user, id_game) {
 }
 router.post(
   "/:id_user/game",
-  [customMiddleware.jwtMiddleware, check("id_game").isNumeric(),check("id_user").isNumeric()],
+  upload.single("photo"),
+  [ customMiddleware.jwtMiddleware, 
+    check("id_game").isNumeric(),
+    check("id_user").isNumeric(),
+    check("tipe").isNumeric(),
+    check("completed_time").custom(completed_time => {
+      //1:23:34
+      let times =completed_time.split(":");
+      for(time of times){
+        if(isNumeric(time) ==false){
+          return Promise.reject('Non Numeric Values');
+        } 
+      }
+      return Promise.resolve();
+  })
+  ],
   async function (req, res, next) {
     const errors = validationResult(req);
+    const image = req.file == undefined ? null : (req.file.path).replace("images\\","")
+    if(req.body.tipe ==1 &&req.body.completed_time !=null){
+      return response.unexpectedError(res, "User tidak dapat memasukkan complete time apabila belum menyelesaikan game");
+    }
+    let completed_time = "";
+    if(req.body.completed_time !=null){
+        let times =req.body.completed_time.split(":");
+        for(time of times){
+          completed_time += time.padStart(2,'0') + ":";
+        }
+        completed_time = completed_time.substring(0, completed_time.length - 1);
+    }
     if (!errors.isEmpty()) {
       return res
         .status(httpCode.VALIDATION_FAIL)
@@ -47,6 +92,9 @@ router.post(
       const data = {
         id_user: parseInt(req.params.id_user) ,
         id_game: req.body.id_game,
+        complete_time : completed_time,
+        tipe : req.body.tipe, 
+        photo : image
       };
       const user_game = await model.users_games.create(data, {
         include: [
@@ -58,13 +106,88 @@ router.post(
           },
         ],
       });
-      if (user_game) {
+      
+      const user_games = await model.users_games.findOne({
+        where: {
+          id: user_game.id,
+        },
+      });
+      if (user_games) {
         return response.insert(
           res,
           "Successfuly inserted user game",
-          user_game
+          user_games
         );
       }
+    } catch (err) {
+      return response.unexpectedError(res, err.message);
+    }
+  }
+);
+
+
+router.patch(
+  "/:id_user/game/:id_game",
+  upload.single("photo"),
+  [ customMiddleware.jwtMiddleware, 
+    check("id_game").isNumeric(),
+    check("id_user").isNumeric(),
+    check("tipe").isNumeric(),
+    check("completed_time").custom(completed_time => {
+      //1:23:34
+      let times =completed_time.split(":");
+      for(time of times){
+        if(isNumeric(time) ==false){
+          return Promise.reject('Non Numeric Values');
+        } 
+      }
+      return Promise.resolve();
+  })
+  ],
+  async function (req, res, next) {
+    const errors = validationResult(req);
+    const image = req.file == undefined ? null : (req.file.path).replace("images\\","")
+    if(req.body.tipe ==1 &&req.body.completed_time !=null){
+      return response.unexpectedError(res, "User tidak dapat memasukkan complete time apabila belum menyelesaikan game");
+    }
+    let completed_time = "";
+    if(req.body.completed_time !=null){
+        let times =req.body.completed_time.split(":");
+        for(time of times){
+          completed_time += time.padStart(2,'0') + ":";
+        }
+        completed_time = completed_time.substring(0, completed_time.length - 1);
+    }
+    if (!errors.isEmpty()) {
+      return res
+        .status(httpCode.VALIDATION_FAIL)
+        .json({ errors: errors.array() });
+    }
+    if(req.user_auth.tipe != 3 && req.user_auth.id != req.params.id_user){
+      return response.forbidden(res, "You don't have enough access to this resource");
+    }
+
+    if ((await checkGameExists(req.params.id_game)) == null) {
+      return response.notFound(res, "Game not found");
+    }if ((await checkUserExists(req.params.id_user)) == null) {
+      return response.notFound(res, "User not found");
+    }
+    try {
+      const update = await model.users_games.update({
+        
+        complete_time : completed_time,
+        tipe : req.body.tipe, 
+        photo : image
+      }, {
+        where : {
+          id_user : req.params.id_user,
+          id_game : req.params.id_game,
+        }
+      });
+      return response.update(
+        res,
+        "Successfuly updated user game",
+      );
     } catch (err) {
       return response.unexpectedError(res, err.message);
     }
@@ -98,6 +221,42 @@ router.get(
           //   // attributes: ["name",],
           // },
           "game",
+        ],
+        order: [
+          ['created_at', 'DESC'],
+        ],
+      });
+      return response.get(res, "", user_games);
+    } catch (err) {
+      return response.unexpectedError(res, err.message);
+    }
+  }
+);
+
+router.get(
+  "/game/:id_game",
+  [customMiddleware.jwtMiddleware, check("id_game").isNumeric()],
+  async function (req, res, next) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res
+          .status(httpCode.VALIDATION_FAIL)
+          .json({ errors: errors.array() });
+      }
+
+      if ((await checkGameExists(req.params.id_game)) == null) {
+        return response.notFound(res, "User not found");
+      }
+      const user_games = await model.users_games.findAll({
+        where: {
+          id_game: req.params.id_game,
+        },
+        include: [
+          "game",
+        ],
+        order: [
+          ['complete_time', 'ASC'],
         ],
       });
       return response.get(res, "", user_games);

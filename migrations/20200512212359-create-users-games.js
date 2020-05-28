@@ -14,6 +14,16 @@ module.exports = {
       id_user: {
         type: Sequelize.INTEGER
       },
+      //1 playing 2 completed-story 3 playing dlc
+      tipe :{
+        type: Sequelize.INTEGER
+      },
+      complete_time :{
+        type: Sequelize.TIME
+      },
+      photo : {
+        type: Sequelize.STRING
+      },
       created_at: {
         allowNull: false,
         defaultValue: Sequelize.literal('NOW()'),
