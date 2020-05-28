@@ -5,7 +5,7 @@ var response = require('../utils/response_function')
 var customValidation = require('../utils/custom_validation')
 var jwt = require('jsonwebtoken')
 const model = require('../models/index');
-
+const igdb = require('igdb-api-node').default;
 const { check, validationResult } = require('express-validator');
 router.post('/register',[
     check('name').isString(),
@@ -45,6 +45,20 @@ router.post('/register',[
   });
 
   
+router.get('/test',async function(req, res, next) {
+  try {
+    
+    const response = await igdb("f242556c12ac37ed908b6751edd2fb9a")
+    .fields('genres.*,screenshots.*,name,slug,summary')
+    .limit(10)
+    .search(req.query.q) 
+    .request('/games'); 
+  return res.json(response.data);
+  } catch (error) {
+    res.json(error);
+    
+  }
+})
 router.post('/login',async function(req, res, next) {
   // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6InJpY2hhcmQiLCJlbWFpbCI6InJpY2hhcmRAZ21haWwuY29tIiwicGhvbmVfbnVtYmVyIjoiMDg1MTM4Mzg0NzUiLCJnZW5kZXIiOnRydWUsInRpcGUiOjEsImNyZWF0ZWRfYXQiOiIyMDIwLTA1LTIxVDExOjE3OjE1LjAwMFoiLCJ1cGRhdGVkX2F0IjoiMjAyMC
   // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6InJpY2hhcmQiLCJlbWFpbCI6InJpY2hhcmRAZ21haWwuY29tIiwicGhvbmVfbnVtYmVyIjoiMDg1MTM4Mzg0NzUiLCJnZW5kZXIiOnRydWUsInRpcGUiOjEsImNyZWF0ZWRfYXQiOiIyMDIwLTA1LTIxVDExOjE3OjE1LjAwMFoiLCJ1cGRhdGVkX2F0IjoiMjAyMC0wNS0yMVQxMToxODowOC4wMDBaIiwiaWF0IjoxNTkwMDU5OTY1LCJleHAiOjE1OTAxNDYzNjV9.rGEI59TCKqxumPhEt-27GQvGDNOVz2tt10l0b9BV2Mgg
@@ -61,7 +75,6 @@ router.post('/login',async function(req, res, next) {
     var token = jwt.sign( user.toJSON(), 'soa2018', {
       expiresIn: 86400 // expires in 24 hours
     });
-    console.log(token);
     user.token = token;
     await user.save();
     return res.status(200).json({

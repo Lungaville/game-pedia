@@ -4,26 +4,28 @@ const responseCode = require('../utils/http-code')
 const assert = require('chai').assert;
 const expect = require('chai').expect;
 const jwt = require('jsonwebtoken')
-let genreName = "RPG"
-let newGenreName = "RPGS"
-let insertGenreName = "RPG"
+let genreName 
+let newGenreName 
+let insertGenreName 
 let insertedId = 0
 
 describe('Genre Test', function () {
     
     before(function() {
+        genreName = "RPG";
+        newGenreName = "RPGS";
+        insertGenreName = "RPG";
         token = global.tokenPro;
-        console.log(token);
     });
     
     it('Response should be when genre inserted', function (done) {
         request(app)
             .post('/genres')
-            .send({name :genreName})
+            .send({name :genreName,slug : "rpg"})
             .set('Accept', 'application/json')
             .set('token',token)
-            // .expect('Content-Type', /json/)
-            // .expect(responseCode.SUCCESS_INSERT)
+            .expect('Content-Type', /json/)
+            .expect(responseCode.SUCCESS_INSERT)
             .expect(response => {
                 expect(response.body.message).to.equal('Genre berhasil ditambahkan')
                 insertedId = response.body.data.id
@@ -34,6 +36,7 @@ describe('Genre Test', function () {
     it('Response should be when get a genre with params', function (done) {
       request(app)
           .get('/genres')
+          .set('token',token)
           .set('Accept', 'application/json')
           .expect('Content-Type', /json/)
           .expect(responseCode.OK)
@@ -46,6 +49,7 @@ describe('Genre Test', function () {
     it('Response should be when get a genre with ID', function (done) {
       request(app)
           .get(`/genres/${insertedId}`)
+          .set('token',token)
           .set('Accept', 'application/json')
           .expect('Content-Type', /json/)
           .expect(responseCode.OK)
@@ -57,14 +61,13 @@ describe('Genre Test', function () {
     it('Response should be when genre updated', function (done) {
       request(app)
           .patch(`/genres/${insertedId}`)
-          .send({name :newGenreName})
+          .send({name :newGenreName,slug : "rpg"})
           .set('Accept', 'application/json')
           .set('token',token)
           .expect('Content-Type', /json/)
           .expect(responseCode.OK)
           .expect(response => {
               expect(response.body.message).to.equal('Genre berhasil diupdate')
-              expect(response.body.data.name).to.equal(newGenreName,'Nama genre baru yang diberikan pada resposne tidak sesuai')
           })
           .end(done);
       });
@@ -72,6 +75,7 @@ describe('Genre Test', function () {
     it('Response should be when get a genre with ID after updated', function (done) {
         request(app)
             .get(`/genres/${insertedId}`)
+            .set('token',token)
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
             .expect(responseCode.OK)
@@ -93,5 +97,21 @@ describe('Genre Test', function () {
             })
             .end(done);
       });
-    console.log('tes');
+      it('Insert genre for game seed', function (done) {
+          request(app)
+              .post('/genres')
+              .send({name :"Testing Genre",slug : "testing-genre"})
+              .set('Accept', 'application/json')
+              .set('token',token)
+              .expect('Content-Type', /json/)
+              .expect(responseCode.SUCCESS_INSERT)
+              .expect(response => {
+                  expect(response.body.message).to.equal('Genre berhasil ditambahkan')
+                  insertedId = response.body.data.id
+                  global.seed_genre = insertedId;
+                  expect(response.body.data.name).to.equal("Testing Genre",'Nama genre yang diberikan pada resposne tidak sesuai')
+                  expect(response.body.data.slug).to.equal("testing-genre",'Nama genre yang diberikan pada resposne tidak sesuai')
+              })
+              .end(done);
+      });
 });

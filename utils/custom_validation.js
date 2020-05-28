@@ -11,7 +11,6 @@ var gameExist = (value,{req}) =>{
 
 var userExist = (value,{req}) =>{
     return model.users.findOne({ where : {id : value}}).then((user) => {
-      console.log(user);
       if(user == null){
         return Promise.reject('User Not Found');
       }

@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     description: DataTypes.STRING,
     image: DataTypes.STRING,
-    genre: DataTypes.STRING,
+    slug: DataTypes.STRING,
     created_by: DataTypes.INTEGER,
   }, {
     updatedAt : 'updated_at',
@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "created_by",
       as: "developer",
     });
+    games.hasMany(models.genre_games,{as : "genre", foreignKey : 'id_game'})
   };
   return games;
 };

@@ -22,10 +22,7 @@ router.get('/:id', [customMiddleware.jwtMiddleware],async function(req, res, nex
     where: {
       id: userId,
     }})
-    console.log(user);
-    console.log('tes');
     if (user) {
-      console.log('tes');
       return response.get(res,'',user);
     }
     else{

@@ -10,13 +10,30 @@ const model = require('../models/index');
 describe('Testing registration for all user role', function () {
     
     before(async function() {
-        console.log("Deleting Seed Data");
-        const usersBasic = await model.users.destroy({
-            truncate: true, where :  {email : fakeData.user.basic.email}});
-        const usersPro = await model.users.destroy({ 
-            truncate: true,where :  {email : fakeData.user.basic.email}});
-        const usersAdmin = await model.users.destroy({ 
-            truncate: true,where :  {email : fakeData.user.basic.email}});
+        await model.users.destroy({
+            where: {},
+            truncate: true
+          })
+          await model.games.destroy({
+              where: {},
+              truncate: true
+            })
+        await model.users_games.destroy({
+            where: {},
+            truncate: true
+          })
+          await  model.genres.destroy({
+            where: {},
+            truncate: true
+          })
+          await  model.users_reviews.destroy({
+            where: {},
+            truncate: true
+          })
+          await   model.genre_games.destroy({
+            where: {},
+            truncate: true
+          })
     });
     it(`Register using basic user with email : ${fakeData.user.basic.email}`, function (done) {
         request(app)

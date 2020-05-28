@@ -11,6 +11,14 @@ module.exports = {
       name: {
         type: Sequelize.STRING
       },
+      slug: {
+        type: Sequelize.STRING,
+      },
+      id_ogdb: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+
+      },
       created_at: {
         allowNull: false,
         defaultValue: Sequelize.literal('NOW()'),

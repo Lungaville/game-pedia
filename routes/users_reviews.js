@@ -13,7 +13,6 @@ var response = require("../utils/response_function");
 /* GET reviews  */
 router.get('/', async (req, res, next) => {
     const reviews = await model.users_reviews.findAll({});
-    console.log(res.locals.reviews);
     return res.json({
         'status': 'OK',
         'message': '',
@@ -78,7 +77,6 @@ router.post('/', [
             review: req.body.review,
             review_score: req.body.review_score,
         }
-        console.log(data);
         const user_review = await model.users_reviews.create(data)
         if (user_review) {
             res.status(201).json({

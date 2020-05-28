@@ -11,13 +11,13 @@ module.exports = {
       name: {
         type: Sequelize.STRING,
       },
-      description: {
-        type: Sequelize.STRING(1000),
-      },
-      image: {
+      slug: {
         type: Sequelize.STRING,
       },
-      genre: {
+      description: {
+        type: Sequelize.TEXT
+      },
+      image: {
         type: Sequelize.STRING,
       },
       created_by: {
