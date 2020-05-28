@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var httpCode = require('../utils/http-code')
+var response = require('../utils/response_function')
 var customValidation = require('../utils/custom_validation')
 var jwt = require('jsonwebtoken')
 const model = require('../models/index');
@@ -18,6 +19,14 @@ router.post('/register',[
       return res.status(httpCode.VALIDATION_FAIL).json({ errors: errors.array() });
     }
     try {
+      const selectUser = await model.users.findOne({
+        where : {
+          email : req.body.email
+        }
+      });
+      if(selectUser!=null){
+        return response.duplicate(res,"Email Already Exists")
+      }
     const users = await model.users.create(req.body);
     if (users) {
       res.status(201).json({

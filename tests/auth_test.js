@@ -33,6 +33,15 @@ describe('Testing registration for all user role', function () {
             .end(done);
     });
     
+    it(`Register using basic user with email : ${fakeData.user.basic.email}, Duplicate email should fail`, function (done) {
+        request(app)
+            .post('/register')
+            .send(fakeData.user.basic)
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/)
+            .expect(responseCode.DUPLICATE)
+            .end(done);
+    });
     it(`Register using basic pro with email : ${fakeData.user.pro.email}`, function (done) {
         request(app)
             .post('/register')
