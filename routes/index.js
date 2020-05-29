@@ -1,4 +1,5 @@
 var express = require('express');
+const midtransClient = require('midtrans-client');
 var router = express.Router();
 var httpCode = require('../utils/http-code')
 var response = require('../utils/response_function')
@@ -7,13 +8,14 @@ var jwt = require('jsonwebtoken')
 const model = require('../models/index');
 const igdb = require('igdb-api-node').default;
 const { check, validationResult } = require('express-validator');
+
 router.post('/register',[
     check('name').isString(),
     check('email').isEmail(),
     check('password').isLength({min : 5 , max : 15}),
     check('gender').isNumeric(),
     check('tipe').isNumeric(),
-  ],async function(req, res, next) {
+  ], async function(req, res, next) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(httpCode.VALIDATION_FAIL).json({ errors: errors.array() });
@@ -24,26 +26,27 @@ router.post('/register',[
           email : req.body.email
         }
       });
-      if(selectUser!=null){
-        return response.duplicate(res,"Email Already Exists")
+      if(selectUser != null){
+        return response.duplicate(res, "Email Already Exists")
       }
-    const users = await model.users.create(req.body);
-    if (users) {
-      res.status(201).json({
-        'status': 'OK',
-        'message': 'Berhasil melakukan registrasi user',
-        'data': users,
+
+      
+      const users = await model.users.create(req.body);
+      if (users) {
+        res.status(201).json({
+          'status': 'OK',
+          'message': 'Berhasil melakukan registrasi user',
+          'data': users,
+        });
+      }
+    } catch (err) {
+      res.status(400).json({
+        'status': 'ERROR',
+        'message': err.message,
+        'data': {},
       })
     }
-   } catch (err) {
-     res.status(400).json({
-       'status': 'ERROR',
-       'message': err.message,
-       'data': {},
-     })
-   }
   });
-
   
 router.get('/test',async function(req, res, next) {
   try {
@@ -58,7 +61,8 @@ router.get('/test',async function(req, res, next) {
     res.json(error);
     
   }
-})
+});
+
 router.post('/login',async function(req, res, next) {
   // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6InJpY2hhcmQiLCJlbWFpbCI6InJpY2hhcmRAZ21haWwuY29tIiwicGhvbmVfbnVtYmVyIjoiMDg1MTM4Mzg0NzUiLCJnZW5kZXIiOnRydWUsInRpcGUiOjEsImNyZWF0ZWRfYXQiOiIyMDIwLTA1LTIxVDExOjE3OjE1LjAwMFoiLCJ1cGRhdGVkX2F0IjoiMjAyMC
   // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6InJpY2hhcmQiLCJlbWFpbCI6InJpY2hhcmRAZ21haWwuY29tIiwicGhvbmVfbnVtYmVyIjoiMDg1MTM4Mzg0NzUiLCJnZW5kZXIiOnRydWUsInRpcGUiOjEsImNyZWF0ZWRfYXQiOiIyMDIwLTA1LTIxVDExOjE3OjE1LjAwMFoiLCJ1cGRhdGVkX2F0IjoiMjAyMC0wNS0yMVQxMToxODowOC4wMDBaIiwiaWF0IjoxNTkwMDU5OTY1LCJleHAiOjE1OTAxNDYzNjV9.rGEI59TCKqxumPhEt-27GQvGDNOVz2tt10l0b9BV2Mgg
@@ -98,5 +102,39 @@ router.post('/login',async function(req, res, next) {
  }
 });
 
+router.get('/pay',async function(req, res, next) {
+  try {
+    // Create Core API instance
+    let snap = new midtransClient.Snap({
+          isProduction : false,
+          serverKey : 'SB-Mid-server-cN7WbDaLR467qn0hP2pIrSC5',
+          clientKey : 'SB-Mid-client-kfnaZxA1RsQQzT7k'
+      });    
 
-  module.exports= router;
+      let parameter = {
+        "transaction_details": {
+          "order_id": "order-id-node-"+Math.round((new Date()).getTime() / 1000),
+          "gross_amount": 300000
+        }, "credit_card":{
+          "secure" : true
+        }
+      };
+    
+      snap.createTransaction(parameter)
+        .then((transaction)=>{
+            // transaction redirect_url
+            let redirectUrl = transaction.redirect_url;
+            console.log('redirectUrl:',redirectUrl);
+            res.writeHead(301, { Location: redirectUrl });
+            res.end();
+        }
+      );
+  } catch (err) {
+    res.status(400).json({
+      'status': 'ERROR',
+      'message': err.message,
+    });
+  }
+});
+
+module.exports= router;
