@@ -26,18 +26,45 @@ router.post('/register',[
           email : req.body.email
         }
       });
-      if(selectUser != null){
+      if (selectUser != null){
         return response.duplicate(res, "Email Already Exists")
       }
-
       
       const users = await model.users.create(req.body);
       if (users) {
+        // Create Core API instance
+        let snap = new midtransClient.Snap({
+          isProduction : false,
+          serverKey : 'SB-Mid-server-cN7WbDaLR467qn0hP2pIrSC5',
+          clientKey : 'SB-Mid-client-kfnaZxA1RsQQzT7k'
+        });    
+
+        let parameter = {
+          "transaction_details": {
+            "order_id": "order-id-node-" + Math.round((new Date()).getTime() / 1000),
+            "gross_amount": 300000
+          }, "credit_card":{
+            "secure" : true
+          }
+        };
+
+        snap.createTransaction(parameter)
+          .then((transaction) => {
+              // transaction redirect_url
+              let redirectUrl = transaction.redirect_url;
+              console.log('redirectUrl:', redirectUrl);
+              
+              res.writeHead(301, { Location: redirectUrl });
+              res.end();
+          }
+        );
+        /*
         res.status(201).json({
           'status': 'OK',
           'message': 'Berhasil melakukan registrasi user',
           'data': users,
         });
+        /* */
       }
     } catch (err) {
       res.status(400).json({
@@ -121,10 +148,11 @@ router.get('/pay',async function(req, res, next) {
       };
     
       snap.createTransaction(parameter)
-        .then((transaction)=>{
+        .then((transaction) => {
             // transaction redirect_url
             let redirectUrl = transaction.redirect_url;
-            console.log('redirectUrl:',redirectUrl);
+            console.log('redirectUrl:', redirectUrl);
+
             res.writeHead(301, { Location: redirectUrl });
             res.end();
         }
