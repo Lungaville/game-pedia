@@ -10,7 +10,10 @@ const { check, validationResult } = require('express-validator');
 
 /* GET users listing. */
 router.get('/',[customMiddleware.jwtMiddleware] ,async function(req, res, next) {
-  const users = await model.users.findAll({});
+  const users = await model.users.findAll({
+    
+    attributes: { exclude: ["subscription_until"]}
+  });
   // console.log(res.locals.user);
   return response.get(res,'',users);
 });
@@ -18,10 +21,19 @@ router.get('/',[customMiddleware.jwtMiddleware] ,async function(req, res, next) 
 router.get('/:id', [customMiddleware.jwtMiddleware],async function(req, res, next) {
   try {
     const userId = req.params.id;
-    const user = await model.users.findOne({ 
-    where: {
-      id: userId,
-    }})
+    let user;
+    if(userId != req.user_auth.id){
+      user = await model.users.findOne({ 
+      where: {
+        id: userId,
+      },
+      attributes: { exclude: ["subscription_until"]}})
+    }else{
+      user = await model.users.findOne({ 
+      where: {
+        id: userId,
+      }})
+    }
     if (user) {
       return response.get(res,'',user);
     }

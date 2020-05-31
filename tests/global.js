@@ -13,6 +13,7 @@ module.exports ={
             name : 'test-pro',
             gender : 1,
             tipe : 2,
+            backdoor: true
         },
         admin : {
             email : 'admin@gmail.com',

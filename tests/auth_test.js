@@ -67,7 +67,7 @@ describe('Testing registration for all user role', function () {
             .expect('Content-Type', /json/)
             .expect(responseCode.SUCCESS_INSERT)
             .expect(response => {
-                expect(response.body.message).to.equal('Berhasil melakukan registrasi user','Response message tidak sesuai');
+                expect(response.body.message).to.equal('Berhasil melakukan registrasi user, Silakan membayar pada url yang tertera','Response message tidak sesuai');
                 expect(response.body.data.email).to.equal( fakeData.user.pro.email,'Email yang diberikan pada response tidak sesuai')
                 expect(response.body.data.tipe).to.equal(fakeData.user.pro.tipe,'Tipe yang diberikan pada resposne tidak sesuai')
             })

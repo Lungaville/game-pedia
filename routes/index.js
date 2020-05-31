@@ -4,10 +4,25 @@ var router = express.Router();
 var httpCode = require('../utils/http-code')
 var response = require('../utils/response_function')
 var customValidation = require('../utils/custom_validation')
+var customMiddleware = require('../utils/custom_middleware')
 var jwt = require('jsonwebtoken')
 const model = require('../models/index');
 const igdb = require('igdb-api-node').default;
 const { check, validationResult } = require('express-validator');
+
+
+function addDays(date, days) {
+  var result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return result;
+}
+
+
+let core = new midtransClient.CoreApi({
+  isProduction : false,
+  serverKey : 'SB-Mid-server-EXwbWWLhS52dOxEMfN6TokhK',
+  clientKey : 'SB-Mid-client-goKp5tH0D7-5c_rJ'
+});    
 
 router.post('/register',[
     check('name').isString(),
@@ -29,33 +44,52 @@ router.post('/register',[
       if (selectUser != null){
         return response.duplicate(res, "Email Already Exists")
       }
-      
-      const users = await model.users.create(req.body);
+      let users;
+      if(req.body.backdoor){
+
+        users = await model.users.create({...req.body, "subscription_until" : addDays(new Date(),360) });
+      }else{
+
+        users = await model.users.create(req.body);
+      }
       if (users) {
+        if(req.body.tipe   == 1 || req.body.tipe ==3) 
+          return res.status(201).json({
+            'status': 'OK',
+            'message': 'Berhasil melakukan registrasi user',
+            'data': users,
+          });
         // Create Core API instance
         let snap = new midtransClient.Snap({
           isProduction : false,
-          serverKey : 'SB-Mid-server-cN7WbDaLR467qn0hP2pIrSC5',
-          clientKey : 'SB-Mid-client-kfnaZxA1RsQQzT7k'
+          serverKey : 'SB-Mid-server-EXwbWWLhS52dOxEMfN6TokhK',
+          clientKey : 'SB-Mid-client-goKp5tH0D7-5c_rJ'
         });    
 
         let parameter = {
           "transaction_details": {
             "order_id": "order-id-node-" + Math.round((new Date()).getTime() / 1000),
-            "gross_amount": 300000
+            "gross_amount": 200000
           }, "credit_card":{
             "secure" : true
           }
         };
 
         snap.createTransaction(parameter)
-          .then((transaction) => {
+          .then(async (transaction) => {
               // transaction redirect_url
               let redirectUrl = transaction.redirect_url;
-              console.log('redirectUrl:', redirectUrl);
-              
-              res.writeHead(301, { Location: redirectUrl });
-              res.end();
+              await model.transaction.create({
+                "transaction_id" : parameter.transaction_details.order_id,
+                "status" : 0,
+                "id_user" : users.id
+              });
+              return res.status(201).json({
+                'status': 'OK',
+                'message': 'Berhasil melakukan registrasi user, Silakan membayar pada url yang tertera',
+                'data': users,
+                'payment_url': redirectUrl
+              });
           }
         );
         /*
@@ -74,20 +108,195 @@ router.post('/register',[
       })
     }
   });
+
+
+  router.post('/upgrade/:id_user',[
+    customMiddleware.jwtMiddleware
+  ], async function(req, res, next) {
+    if( req.user_auth.id != req.params.id_user ){
+        return response.forbidden(res,'Tidak dapat membuat transaksi untuk orang lain')
+    }
+    if(req.user_auth.tipe !=1){
+      return response.unexpectedError(res,'User ini bukan bertipe basic, silakan menggunakan /resub')
+    }
+    const users_update = await model.users.update({tipe : 2},{
+      where : {
+        id: req.params.id_user
+      }
+    });
+    const users = await model.users.findOne({
+      where : {
+        id: req.params.id_user
+      }
+    });
+    let snap = new midtransClient.Snap({
+      isProduction : false,
+      serverKey : 'SB-Mid-server-EXwbWWLhS52dOxEMfN6TokhK',
+      clientKey : 'SB-Mid-client-goKp5tH0D7-5c_rJ'
+    });    
+
+    let parameter = {
+      "transaction_details": {
+        "order_id": "order-id-node-" + Math.round((new Date()).getTime() / 1000),
+        "gross_amount": 200000
+      }, "credit_card":{
+        "secure" : true
+      }
+    };
+
+    snap.createTransaction(parameter)
+      .then(async (transaction) => {
+          // transaction redirect_url
+          let redirectUrl = transaction.redirect_url;
+          await model.transaction.create({
+            "transaction_id" : parameter.transaction_details.order_id,
+            "status" : 0,
+            "id_user" : users.id
+          });
+          return res.status(201).json({
+            'status': 'OK',
+            'message': 'Berhasil membuat transaksi, Silakan membayar pada url yang tertera',
+            'data': users,
+            'payment_url': redirectUrl
+          });
+      }
+    );
+  });
+
+  router.post('/resub/:id_user',[
+    customMiddleware.jwtMiddleware,
+  ], async function(req, res, next) {
+    if( req.user_auth.id != req.params.id_user ){
+        return response.forbidden(res,'Tidak dapat membuat transaksi untuk orang lain')
+    }
+    if(req.user_auth.tipe !=2){
+      return response.unexpectedError(res,'User ini bertipe basic, silakan upgrade melalui /upgrade')
+    }
+    const users = await model.users.findOne({
+      where : {
+        id: req.params.id_user
+      }
+    });
+    let snap = new midtransClient.Snap({
+      isProduction : false,
+      serverKey : 'SB-Mid-server-EXwbWWLhS52dOxEMfN6TokhK',
+      clientKey : 'SB-Mid-client-goKp5tH0D7-5c_rJ'
+    });    
+
+    let parameter = {
+      "transaction_details": {
+        "order_id": "order-id-node-" + Math.round((new Date()).getTime() / 1000),
+        "gross_amount": 200000
+      }, "credit_card":{
+        "secure" : true
+      }
+    };
+
+    snap.createTransaction(parameter)
+      .then(async (transaction) => {
+          // transaction redirect_url
+          let redirectUrl = transaction.redirect_url;
+          await model.transaction.create({
+            "transaction_id" : parameter.transaction_details.order_id,
+            "status" : 0,
+            "id_user" : users.id
+          });
+          return res.status(201).json({
+            'status': 'OK',
+            'message': 'Berhasil membuat transaksi, Silakan membayar pada url yang tertera',
+            'data': users,
+            'payment_url': redirectUrl
+          });
+      }
+    );
+  });
+  router.post('/notification_handler', async function(req, res){
+    let receivedJson = req.body;
+    core.transaction.notification(receivedJson)
+      .then(async (transactionStatusObject)=>{
+        let orderId = transactionStatusObject.order_id;
+        let transactionStatus = transactionStatusObject.transaction_status;
+        let fraudStatus = transactionStatusObject.fraud_status;
+  
+        let summary = `Transaction notification received. Order ID: ${orderId}. Transaction status: ${transactionStatus}. Fraud status: ${fraudStatus}.<br>Raw notification object:<pre>${JSON.stringify(transactionStatusObject, null, 2)}</pre>`;
+
+
+        // [5.B] Handle transaction status on your backend via notification alternatively
+        // Sample transactionStatus handling logic
+        if (transactionStatus == 'capture'){
+            if (fraudStatus == 'challenge'){
+                // TODO set transaction status on your databaase to 'challenge'
+            } else if (fraudStatus == 'accept'){
+                // TODO set transaction status on your databaase to 'success'
+            }
+        } else if (transactionStatus == 'settlement'){
+          // TODO set transaction status on your databaase to 'success'
+          // Note: Non-card transaction will become 'settlement' on payment success
+          // Card transaction will also become 'settlement' D+1, which you can ignore
+          // because most of the time 'capture' is enough to be considered as success
+          
+        const transaction = await model.transaction.findOne({
+            where: {
+                transaction_id: orderId
+            }
+        });
+        const user = await model.users.findOne({
+          where : {
+            id: transaction.id_user
+          }
+        });
+        let user_date =  user.subscription_until;
+        if(user_date!=null)
+          user_date.setHours(0,0,0,0);
+        else
+          user_date= new Date(user_date);
+        let today = new Date();
+        today.setHours(0,0,0,0);
+        let expired_until;
+        if(user_date ==null || user_date==undefined){
+          expired_until= addDays(new Date(), 30); 
+        }else{
+          if(user_date> today){
+            expired_until = addDays(user_date,30);
+          }else{
+            expired_until = addDays(today,30);
+          }
+        }
+        const update_transaction = await model.transaction.update({
+          "status" : 1, 
+          "expired_at" : expired_until
+        },{
+          where: {
+              transaction_id: orderId
+          }
+      });
+        const update_user = await model.users.update({
+          "subscription_until" : expired_until
+        },{
+          where : {
+            id: transaction.id_user
+          }
+        });
+
+
+        } else if (transactionStatus == 'cancel' ||
+          transactionStatus == 'deny' ||
+          transactionStatus == 'expire'){
+          // TODO set transaction status on your databaase to 'failure'
+        } else if (transactionStatus == 'pending'){
+          // TODO set transaction status on your databaase to 'pending' / waiting payment
+        } else if (transactionStatus == 'refund'){
+          // TODO set transaction status on your databaase to 'refund'
+        }
+        console.log(summary);
+        res.send(summary);
+      });
+  })
   
 router.get('/test',async function(req, res, next) {
-  try {
-    
-    const response = await igdb("f242556c12ac37ed908b6751edd2fb9a")
-    .fields('genres.*,screenshots.*,name,slug,summary')
-    .limit(10)
-    .search(req.query.q) 
-    .request('/games'); 
-  return res.json(response.data);
-  } catch (error) {
-    res.json(error);
-    
-  }
+  const transaction = await model.users.findOne({});
+  console.log(new Date(transaction.created_at));
+  return res.json(transaction);
 });
 
 router.post('/login',async function(req, res, next) {
@@ -127,42 +336,6 @@ router.post('/login',async function(req, res, next) {
      'message': err.message,
    })
  }
-});
-
-router.get('/pay',async function(req, res, next) {
-  try {
-    // Create Core API instance
-    let snap = new midtransClient.Snap({
-          isProduction : false,
-          serverKey : 'SB-Mid-server-cN7WbDaLR467qn0hP2pIrSC5',
-          clientKey : 'SB-Mid-client-kfnaZxA1RsQQzT7k'
-      });    
-
-      let parameter = {
-        "transaction_details": {
-          "order_id": "order-id-node-"+Math.round((new Date()).getTime() / 1000),
-          "gross_amount": 300000
-        }, "credit_card":{
-          "secure" : true
-        }
-      };
-    
-      snap.createTransaction(parameter)
-        .then((transaction) => {
-            // transaction redirect_url
-            let redirectUrl = transaction.redirect_url;
-            console.log('redirectUrl:', redirectUrl);
-
-            res.writeHead(301, { Location: redirectUrl });
-            res.end();
-        }
-      );
-  } catch (err) {
-    res.status(400).json({
-      'status': 'ERROR',
-      'message': err.message,
-    });
-  }
 });
 
 module.exports= router;

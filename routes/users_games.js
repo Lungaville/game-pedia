@@ -101,7 +101,7 @@ router.post(
           {
             model: model.users,
             as: "user",
-            attributes: { exclude: ["password", "token", "tipe"] },
+            attributes: { exclude: ["password", "token", "tipe","subscription_until"] },
             // attributes: ["name",],
           },
         ],

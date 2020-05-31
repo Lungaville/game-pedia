@@ -27,6 +27,10 @@ module.exports = {
       tipe: {
         type: Sequelize.INTEGER
       },
+      subscription_until: {
+        type: Sequelize.DATE,
+        allowNull : true
+      },
       created_at: {
         allowNull: false,
         defaultValue: Sequelize.literal('NOW()'),

@@ -34,6 +34,24 @@ function checkRole(role){
                 'message': `Minimum ${role.name} to use this endpoint `,
                 });
         }
+        if(role.value ==2 && req.user_auth.tipe ==2) {
+            let today = new Date();
+            let userDate = req.user_auth.subscription_until;
+            if(userDate == undefined || userDate == null){
+                return res.status(httpCode.FORBIDDEN).json({
+                    'status': 'FORBIDDEN',
+                    'message': `Please pay subscription first before using this pro endpoint, you still can use basic endpoint `,
+                });
+            }else{
+                userDate= new Date(userDate);
+                if(userDate < today){
+                    return res.status(httpCode.FORBIDDEN).json({
+                        'status': 'FORBIDDEN',
+                        'message': `Your subscription has expired at ${req.user_auth.subscription_until} , please renew your subsription before using this endpoint`,
+                    }); 
+                }
+            }
+        }
         next();
     }
 }

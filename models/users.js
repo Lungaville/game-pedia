@@ -8,6 +8,7 @@ module.exports = (sequelize, DataTypes) => {
     token : DataTypes.STRING,
     email: DataTypes.STRING,
     gender: DataTypes.BOOLEAN,
+    subscription_until : DataTypes.DATE,
     tipe : DataTypes.INTEGER,
   }, {
     updatedAt : 'updated_at',

@@ -120,7 +120,7 @@ router.patch('/:id',[
     });
     const genre = await model.genres.findOne({
       where:{id:genreId},
-      attributes: { exclude: ["updated_at", "created_at"]}
+      // attributes: { exclude: ["updated_at", "created_at"]}
     })
     if (genres) {
       res.json({
@@ -149,7 +149,7 @@ router.delete('/:id', [
     const genreId = req.params.id;
     const genre = await model.genres.findOne({ 
       where:{id:genreId},
-      attributes: { exclude: ["updated_at", "created_at"]}
+      // attributes: { exclude: ["updated_at", "created_at"]}
     })
     const genres = await model.genres.destroy({ where: {
       id: genreId
