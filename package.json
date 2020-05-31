@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon ./bin/www",
+    "start": "node ./bin/www",
     "test": "mocha 'tests/auth_test.js' 'tests/genre_test'  'tests/game_test' 'tests/user_review_test' 'tests/user_game_test' 'tests/users_test' --reporter mochawesome --exit --timeout 8000"
   },
   "dependencies": {
