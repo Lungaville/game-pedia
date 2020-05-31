@@ -27,7 +27,8 @@ router.get('/:id', [customMiddleware.jwtMiddleware],async function(req, res, nex
       where: {
         id: userId,
       },
-      attributes: { exclude: ["subscription_until"]}})
+      attributes: { exclude: ["subscription_until"]}
+    })
     }else{
       user = await model.users.findOne({ 
       where: {
@@ -40,6 +41,31 @@ router.get('/:id', [customMiddleware.jwtMiddleware],async function(req, res, nex
     else{
       return response.notFound(res,'User tidak ditemukan');
     }
+  } catch (err) {
+    res.status(400).json({
+      'status': 'ERROR',
+      'message': err.message,
+    })
+  }
+});
+
+
+router.get('/:id/transactions', [customMiddleware.jwtMiddleware,],async function(req, res, next) {
+  try {
+    if(req.user_auth.id != req.params.id){
+      return response.forbidden(res, "You cannot access other user resource");
+    }
+    const userId = req.params.id;
+
+    transaction = await model.transaction.findAll({ 
+      where: {
+        id: userId,
+        status: 1,
+      },
+      attributes: { exclude: ["id_user"]}
+    })
+    
+    return response.get(res,'',transaction);
   } catch (err) {
     res.status(400).json({
       'status': 'ERROR',
