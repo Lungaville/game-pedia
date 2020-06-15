@@ -192,8 +192,11 @@ router.delete('/:id', [
             res.json({
                 'status': 'OK',
                 'message': 'User review berhasil dihapus',
-                'data': user_review,
             })
+        } else {
+            return response.notFound(
+                res, 'Review Not Found'
+            )
         }
     } catch (err) {
         res.status(400).json({
