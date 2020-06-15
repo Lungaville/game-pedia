@@ -133,37 +133,35 @@ router.patch('/:id', [
                 'id': req.params.id
             }
         });
-        if (selectReview == null) {
-            return response.notFound(res, 'Review tidak ditemukan')
-        }
-        if (req.user_auth.tipe != 3 && req.user_auth.id != selectReview.id_user) {
-            return response.forbidden(res, 'Tidak bisa mengedit review orang lain')
-        }
+        if (selectReview) {
+            if (req.user_auth.tipe != 3 && req.user_auth.id != selectReview.id_user) {
+                return response.forbidden(res, 'Tidak bisa mengedit review orang lain')
+            }
 
-        const id = req.params.id;
-        const {
-            review,
-            review_score
-        } = req.body;
-        const user_review = await model.users_reviews.update({
-            review,
-            review_score
-        }, {
-            where: {
-                id: id
+            const id = req.params.id;
+            const {
+                review,
+                review_score
+            } = req.body;
+            const user_review = await model.users_reviews.update({
+                review,
+                review_score
+            }, {
+                where: {
+                    id: id
+                }
+            });
+            const updated_user_review = await model.users_reviews.findOne({
+                where: {
+                    id: id
+                }
+            });
+            if (updated_user_review) {
+                return response.update(res, 'User berhasil dupdate')
             }
-        });
-        const updated_user_review = await model.users_reviews.findOne({
-            where: {
-                id: id
-            }
-        });
-        if (updated_user_review) {
-            return res.json({
-                'status': 'OK',
-                'message': 'User berhasil diupdate',
-                'data': updated_user_review,
-            })
+        } else {
+
+            return response.notFound(res, 'Review tidak ditemukan')
         }
     } catch (err) {
         return res.status(400).json({
