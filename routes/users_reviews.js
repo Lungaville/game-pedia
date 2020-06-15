@@ -168,7 +168,7 @@ router.delete('/:id', [
     customMiddleware.jwtMiddleware,
     customMiddleware.userReviewOwnership,
     // TO DO : Validate ownership, unless user type is admin
-    check('id').custom(customValidation.reviewExist),
+    check('id'),
 ], async (req, res, next) => {
     try {
         const selectReview = await model.users_reviews.findOne({
@@ -193,6 +193,7 @@ router.delete('/:id', [
                 );
             }
         } else {
+
             return response.notFound(res, 'Review tidak ditemukan')
         }
 
