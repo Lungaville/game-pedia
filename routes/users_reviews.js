@@ -155,7 +155,7 @@ router.patch('/:id', [
                 }
             });
             if (updated_user_review) {
-                return response.update(res, 'User berhasil dupdate')
+                return response.update(res, 'User berhasil diupdate')
             }
         } else {
 

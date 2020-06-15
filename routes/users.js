@@ -86,11 +86,18 @@ router.patch('/:id', [customMiddleware.jwtMiddleware], async function (req, res,
     if (req.user_auth.tipe != 3 && req.user_auth.id != req.params.id) {
       return response.forbidden(res, "You don't have enough access to this resource");
     }
-
     const usersId = req.params.id;
     const gender = req.body.gender;
     const name = req.body.name;
 
+    const select_user = await model.users.findOne({
+      where: {
+        id: usersId
+      }
+    });
+    if (!select_user) {
+      return response.notFound(res, 'User not found')
+    }
     const users = await model.users.update({
       name,
       gender,
@@ -115,6 +122,15 @@ router.delete('/:id', [customMiddleware.jwtMiddleware, customMiddleware.minimumA
 
   try {
     const usersId = req.params.id;
+
+    const select_user = await model.users.findOne({
+      where: {
+        id: usersId
+      }
+    });
+    if (!select_user) {
+      return response.notFound(res, 'User not found')
+    }
     const users = await model.users.destroy({
       where: {
         id: usersId

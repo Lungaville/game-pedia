@@ -139,6 +139,15 @@ router.patch('/:id', [
     const genreId = req.params.id;
     const name = req.body.name;
     const slug = req.body.slug;
+    const genre = await model.genres.findOne({
+      where: {
+        id: genreId
+      },
+      // attributes: { exclude: ["updated_at", "created_at"]}
+    })
+    if (!genre) {
+      return response.notFound(res, "Genre not found")
+    }
     const genres = await model.genres.update({
       "name": name,
       "slug": slug
@@ -147,18 +156,7 @@ router.patch('/:id', [
         id: genreId
       }
     });
-    const genre = await model.genres.findOne({
-      where: {
-        id: genreId
-      },
-      // attributes: { exclude: ["updated_at", "created_at"]}
-    })
-    if (genres) {
-      res.json({
-        'status': 'OK',
-        'message': 'Genre berhasil diupdate',
-      })
-    }
+    return response.update(res, 'Genre berhasil diupdate')
   } catch (err) {
     res.status(400).json({
       'status': 'ERROR',
