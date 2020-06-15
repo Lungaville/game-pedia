@@ -171,7 +171,6 @@ router.patch('/:id', [
 
 router.delete('/:id', [
     customMiddleware.jwtMiddleware,
-    customMiddleware.userReviewOwnership,
     // TO DO : Validate ownership, unless user type is admin
     check('id'),
 ], async (req, res, next) => {
