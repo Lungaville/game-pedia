@@ -22,6 +22,7 @@ router.get('/', async (req, res, next) => {
 
 router.get('/:id', [
     check('id').custom(customValidation.reviewExist),
+    customMiddleware.jwtMiddleware
 ], async (req, res, next) => {
     try {
         const review = await model.users_reviews.findOne({
@@ -29,14 +30,14 @@ router.get('/:id', [
                 'id': req.params.id
             }
         });
-        if(review !=null)
-        return res.json({
-            'status': 'OK',
-            'message': '',
-            'data': review
-        })
-        else{
-            return response.notFound(res,"Review tidak ditemukan");
+        if (review != null)
+            return res.json({
+                'status': 'OK',
+                'message': '',
+                'data': review
+            })
+        else {
+            return response.notFound(res, "Review tidak ditemukan");
         }
     } catch (err) {
         res.status(400).json({
@@ -68,9 +69,9 @@ router.post('/', [
         });
     }
     try {
-    if(req.user_auth.tipe != 3 && parseInt(req.user_auth.id)  != parseInt(req.body.id_user) ){
-        return response.forbidden(res, "You don't have enough access to this resource");
-      }
+        if (req.user_auth.tipe != 3 && parseInt(req.user_auth.id) != parseInt(req.body.id_user)) {
+            return response.forbidden(res, "You don't have enough access to this resource");
+        }
         const data = {
             id_game: req.body.id_game,
             id_user: req.body.id_user,
@@ -116,19 +117,19 @@ router.patch('/:id', [
         });
     }
     try {
-        
-        const selectReview= await model.users_reviews.findOne({
+
+        const selectReview = await model.users_reviews.findOne({
             where: {
                 'id': req.params.id
             }
         });
-        if(selectReview==null){
-            return response.notFound(res,'Review tidak ditemukan')
+        if (selectReview == null) {
+            return response.notFound(res, 'Review tidak ditemukan')
         }
-        if(req.user_auth.tipe != 3 && req.user_auth.id != selectReview.id_user ){
-            return response.forbidden(res,'Tidak bisa mengedit review orang lain')
+        if (req.user_auth.tipe != 3 && req.user_auth.id != selectReview.id_user) {
+            return response.forbidden(res, 'Tidak bisa mengedit review orang lain')
         }
-        
+
         const id = req.params.id;
         const {
             review,
@@ -164,16 +165,16 @@ router.delete('/:id', [
     check('id').custom(customValidation.reviewExist),
 ], async (req, res, next) => {
     try {
-        const selectReview= await model.users_reviews.findOne({
+        const selectReview = await model.users_reviews.findOne({
             where: {
                 'id': req.params.id
             }
         });
-        if(selectReview==null){
-            return response.notFound(res,'Review tidak ditemukan')
+        if (selectReview == null) {
+            return response.notFound(res, 'Review tidak ditemukan')
         }
-        if(req.user_auth.tipe != 3 && req.user_auth.id != selectReview.id_user ){
-            return response.forbidden(res,'Tidak bisa mengedit review orang lain')
+        if (req.user_auth.tipe != 3 && req.user_auth.id != selectReview.id_user) {
+            return response.forbidden(res, 'Tidak bisa mengedit review orang lain')
         }
         const id = req.params.id;
         const user_review = await model.users_reviews.destroy({
