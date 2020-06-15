@@ -9,7 +9,10 @@ const model = require("../models/index");
 const igdb = require('igdb-api-node').default;
 var Sequelize = require('sequelize');
 
-const { check, validationResult } = require("express-validator");
+const {
+  check,
+  validationResult
+} = require("express-validator");
 
 const storage = multer.diskStorage({
   destination: (req, file, callback) => {
@@ -18,9 +21,9 @@ const storage = multer.diskStorage({
   filename: (req, file, callback) => {
     const filename = file.originalname.split(".");
     const extension = filename[1];
-    const filetypes= /jpeg|jpg|png/;
-    const mimetype=filetypes.test(file.mimetype);
-    if(mimetype)callback(null, Date.now() + "." + extension);
+    const filetypes = /jpeg|jpg|png/;
+    const mimetype = filetypes.test(file.mimetype);
+    if (mimetype) callback(null, Date.now() + "." + extension);
     else callback('Error: Image Only')
   }
 });
@@ -29,7 +32,11 @@ const upload = multer({
 });
 
 function checkSlugExists(slug) {
-  return model.games.findOne({ where: { slug: slug } });
+  return model.games.findOne({
+    where: {
+      slug: slug
+    }
+  });
 }
 router.post(
   "/",
@@ -44,19 +51,21 @@ router.post(
   ],
   async function (req, res, next) {
     const errors = validationResult(req);
-    const image = req.file == undefined ? null : (req.file.path).replace("images\\","")
-    if(await checkSlugExists(req.body.slug) !=null){
-      response.duplicate(res,"Slug already exists")
+    const image = req.file == undefined ? null : (req.file.path).replace("images\\", "")
+    if (await checkSlugExists(req.body.slug) != null) {
+      response.duplicate(res, "Slug already exists")
     }
     const body = {
       ...req.body,
-      created_by:parseInt(req.user_auth.id),
+      created_by: parseInt(req.user_auth.id),
       image: image
     }
     if (!errors.isEmpty()) {
       return res
         .status(httpCode.VALIDATION_FAIL)
-        .json({ errors: errors.array() });
+        .json({
+          errors: errors.array()
+        });
     }
     try {
       const queryGames = await model.games.create(body);
@@ -65,7 +74,7 @@ router.post(
           id: queryGames.id,
         },
       });
-      for(genre of req.body.genre){
+      for (genre of req.body.genre) {
         const queryGenre = await model.genre_games.create({
           id_game: game.id,
           id_genre: genre,
@@ -95,26 +104,48 @@ router.post(
   }
 );
 
-router.get("/", async function (req, res, next) {
+router.get("/", [
+  customMiddleware.jwtMiddleware,
+], async function (req, res, next) {
   console.log(req.query.q);
-  if(req.query.q !=undefined && req.query.q != ""){
+  if (req.query.q != undefined && req.query.q != "") {
     console.log("tes");
     const response = await igdb("f242556c12ac37ed908b6751edd2fb9a")
-    .fields('genres.*,screenshots.*,name,slug,summary')
-    .limit(10)
-    .search(req.query.q) 
-    .request('/games'); 
-    
+      .fields('genres.*,screenshots.*,name,slug,summary')
+      .limit(10)
+      .search(req.query.q)
+      .request('/games');
+
     var data = response.data;
     for (const item of data) {
       let imageLink = "";
-      if(item.screenshots != undefined ){
-        imageLink= item.screenshots[0].url;
+      if (item.screenshots != undefined) {
+        imageLink = item.screenshots[0].url;
       }
-      const [game,created] = await model.games.findOrCreate({where:{slug : item.slug}, defaults : {slug : item.slug, name: item.name, created_by : 0, description: item.summary, image: imageLink} });
-      if( created && item.genres != undefined ){ 
-        for(const genre of item.genres){
-          const [select_genre,created] = await model.genres.findOrCreate({where:{slug : genre.slug}, defaults : {slug : genre.slug, name: genre.name, id_ogdb : genre.id} });
+      const [game, created] = await model.games.findOrCreate({
+        where: {
+          slug: item.slug
+        },
+        defaults: {
+          slug: item.slug,
+          name: item.name,
+          created_by: 0,
+          description: item.summary,
+          image: imageLink
+        }
+      });
+      if (created && item.genres != undefined) {
+        for (const genre of item.genres) {
+          const [select_genre, created] = await model.genres.findOrCreate({
+            where: {
+              slug: genre.slug
+            },
+            defaults: {
+              slug: genre.slug,
+              name: genre.name,
+              id_ogdb: genre.id
+            }
+          });
           const seed_genre_game_ogdb = await model.genre_games.create({
             id_game: game.id,
             id_genre: select_genre.id,
@@ -124,10 +155,12 @@ router.get("/", async function (req, res, next) {
     }
   }
   whereParam = {}
-  if(req.query.q !=undefined && req.query.q != "") whereParam.name = {[Sequelize.Op.like]: "%"+req.query.q+"%"};
+  if (req.query.q != undefined && req.query.q != "") whereParam.name = {
+    [Sequelize.Op.like]: "%" + req.query.q + "%"
+  };
   const games = await model.games.findAll({
-    include : "genre",
-    where : whereParam
+    include: "genre",
+    where: whereParam
   });
   // console.log(res.locals.user);
   return res.json({
@@ -137,27 +170,28 @@ router.get("/", async function (req, res, next) {
   });
 });
 
-router.get("/:id", async function (req, res, next) {
-  try {
-    const gameId = req.params.id;
-    const game = await model.games.findOne({
-      where: {
-        id: gameId,
-      },
-      include: "genre"
-    });
-    if (game) {
-      res.json({
-        status: "OK",
-        data: game,
+router.get("/:id",
+  customMiddleware.jwtMiddleware, async function (req, res, next) {
+    try {
+      const gameId = req.params.id;
+      const game = await model.games.findOne({
+        where: {
+          id: gameId,
+        },
+        include: "genre"
+      });
+      if (game) {
+        res.json({
+          status: "OK",
+          data: game,
+        });
+      }
+    } catch (err) {
+      res.status(400).json({
+        status: "ERROR",
+        message: err.message,
       });
     }
-  } catch (err) {
-    res.status(400).json({
-      status: "ERROR",
-      message: err.message,
-    });
-  }
-});
+  });
 
 module.exports = router;
