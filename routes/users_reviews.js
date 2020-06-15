@@ -176,24 +176,27 @@ router.delete('/:id', [
                 'id': req.params.id
             }
         });
-        if (!selectReview) {
-            return response.notFound(res, 'Review tidak ditemukan')
-        }
-        if (req.user_auth.tipe != 3 && req.user_auth.id != selectReview.id_user) {
-            return response.forbidden(res, 'Tidak bisa mengedit review orang lain')
-        }
-        const id = req.params.id;
-        const user_review = await model.users_reviews.destroy({
-            where: {
-                id: id
+        if (selectReview) {
+            if (req.user_auth.tipe != 3 && req.user_auth.id != selectReview.id_user) {
+                return response.forbidden(res, 'Tidak bisa mengedit review orang lain')
             }
-        })
-        if (user_review) {
-            return response.delete(
-                res,
-                'User Review berhasil dihapus'
-            );
+            const id = req.params.id;
+            const user_review = await model.users_reviews.destroy({
+                where: {
+                    id: id
+                }
+            })
+            if (user_review) {
+                return response.delete(
+                    res,
+                    'User Review berhasil dihapus'
+                );
+            }
+        } else {
+            return response.notFound(res, 'Review tidak ditemukan')
+
         }
+
     } catch (err) {
         res.status(400).json({
             'status': 'ERROR',
