@@ -13,6 +13,7 @@ const {
 
 /* GET users listing. */
 router.get('/', [customMiddleware.jwtMiddleware], async function (req, res, next) {
+
   const users = await model.users.findAll({
 
     attributes: {

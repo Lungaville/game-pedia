@@ -13,7 +13,13 @@ var response = require("../utils/response_function");
 /* GET reviews  */
 router.get('/',
     customMiddleware.jwtMiddleware, async (req, res, next) => {
-        const reviews = await model.users_reviews.findAll({});
+
+        let whereParam = {};
+        whereParam.id_user = req.params.id_user;
+        if (req.query.id_game != undefined) whereParam.id_game = req.query.id_game;
+        const reviews = await model.users_reviews.findAll({
+            where: whereParam
+        });
         return res.json({
             'status': 'OK',
             'message': '',
