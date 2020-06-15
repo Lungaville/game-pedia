@@ -11,14 +11,15 @@ const model = require('../models/index');
 var response = require("../utils/response_function");
 
 /* GET reviews  */
-router.get('/', async (req, res, next) => {
-    const reviews = await model.users_reviews.findAll({});
-    return res.json({
-        'status': 'OK',
-        'message': '',
-        'data': reviews
-    })
-});
+router.get('/',
+    customMiddleware.jwtMiddleware, async (req, res, next) => {
+        const reviews = await model.users_reviews.findAll({});
+        return res.json({
+            'status': 'OK',
+            'message': '',
+            'data': reviews
+        })
+    });
 
 router.get('/:id', [
     check('id').custom(customValidation.reviewExist),
