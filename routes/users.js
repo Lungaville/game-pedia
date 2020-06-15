@@ -81,7 +81,8 @@ router.get('/:id/transactions', [customMiddleware.jwtMiddleware, ], async functi
   }
 });
 
-router.patch('/:id', [customMiddleware.jwtMiddleware], async function (req, res, next) {
+router.patch('/:id', [customMiddleware.jwtMiddleware], async function (req, res) {
+  console.log(req.body);
   try {
     if (req.user_auth.tipe != 3 && req.user_auth.id != req.params.id) {
       return response.forbidden(res, "You don't have enough access to this resource");
@@ -99,15 +100,15 @@ router.patch('/:id', [customMiddleware.jwtMiddleware], async function (req, res,
       return response.notFound(res, 'User not found')
     }
     const users = await model.users.update({
-      name,
-      gender,
+      'name': name,
+      "gender": gender
     }, {
       where: {
-        id: usersId
+        "id": usersId
       }
     });
     if (users) {
-      console.log(users);
+      console.log(users)
       return response.update(res, 'User berhasil diupdate');
     }
   } catch (err) {

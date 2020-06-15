@@ -15,8 +15,9 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
+      //1 male 2 female
       gender: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.INTEGER
       },
       password: {
         type: Sequelize.STRING
@@ -29,7 +30,7 @@ module.exports = {
       },
       subscription_until: {
         type: Sequelize.DATE,
-        allowNull : true
+        allowNull: true
       },
       created_at: {
         allowNull: false,
