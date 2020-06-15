@@ -186,27 +186,21 @@ router.delete('/:id', [
       },
       // attributes: { exclude: ["updated_at", "created_at"]}
     })
-    const genres = await model.genres.destroy({
-      where: {
-        id: genreId
-      }
-    })
-    const foreignGenres = await model.genre_games.destroy({
-      where: {
-        id_genre: genreId
-      }
-    })
-    if (genres || foreignGenres) {
-      res.json({
-        'status': 'OK',
-        'message': 'Genre berhasil dihapus',
-        'data': genre,
+    if (genre) {
+
+      const genres = await model.genres.destroy({
+        where: {
+          id: genreId
+        }
       })
+      if (genres) {
+        return response.delete(res, 'Genre berhasil dihapus')
+      } else {
+        return response.unexpectedError(res, 'Something error')
+      }
     } else {
-      res.json({
-        'status': 'Error',
-        'message': 'Something error in server'
-      })
+
+      return response.notFound(res, 'Genre not found')
     }
   } catch (err) {
     res.status(400).json({
