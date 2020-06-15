@@ -1,2 +1,1 @@
-# NodeJS Game RESTful API
-
+NodeJS Game RESTful API
