@@ -108,8 +108,6 @@ router.post('/', [
 
 router.patch('/:id', [
     customMiddleware.jwtMiddleware,
-    customMiddleware.userReviewOwnership,
-    // TO DO : Validate ownership, unless user type is admin
     check('id'),
     check('review').notEmpty().isString(),
     check('review_score').notEmpty().isNumeric().custom(rating => {
