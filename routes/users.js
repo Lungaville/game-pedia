@@ -63,10 +63,9 @@ router.get('/:id/transactions', [customMiddleware.jwtMiddleware, ], async functi
       return response.forbidden(res, "You cannot access other user resource");
     }
     const userId = req.params.id;
-
     transaction = await model.transaction.findAll({
       where: {
-        id: userId,
+        id_user: userId,
       },
       attributes: {
         exclude: ["id_user"]
