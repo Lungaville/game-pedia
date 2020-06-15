@@ -70,6 +70,15 @@ router.post('/', [
         });
     }
     try {
+        const review = await model.users_reviews.findOne({
+            where: {
+                id_game: req.body.id_game,
+                id_user: req.body.id_user
+            }
+        })
+        if (review) {
+            return response.duplicate(res, "User already rate this game")
+        }
         if (req.user_auth.tipe != 3 && parseInt(req.user_auth.id) != parseInt(req.body.id_user)) {
             return response.forbidden(res, "You don't have enough access to this resource");
         }
