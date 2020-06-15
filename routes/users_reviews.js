@@ -173,7 +173,7 @@ router.delete('/:id', [
     try {
         const selectReview = await model.users_reviews.findOne({
             where: {
-                'id': req.params.id
+                id: req.params.id
             }
         });
         if (selectReview) {
@@ -194,11 +194,10 @@ router.delete('/:id', [
             }
         } else {
             return response.notFound(res, 'Review tidak ditemukan')
-
         }
 
     } catch (err) {
-        res.status(400).json({
+        return res.status(400).json({
             'status': 'ERROR',
             'message': err.message,
         })

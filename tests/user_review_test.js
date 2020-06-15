@@ -22,8 +22,8 @@ let token; // hard-coded
 let id = null // ID of resource from GET request
 
 describe('Users Reviews Test', function () {
-    before(function() {
-        id_game =  global.seed_id_game;
+    before(function () {
+        id_game = global.seed_id_game;
         tokenBasic = global.tokenBasic;
         idUserBasic = global.userBasic.id;
         idUserPro = global.userPro.id;
@@ -155,7 +155,7 @@ describe('Users Reviews Test', function () {
             .expect('Content-Type', /json/)
             .expect(responseCode.OK)
             .expect(response => {
-                expect(response.body.message).to.equal('User review berhasil dihapus', 'Response message tidak sesuai')
+                expect(response.body.message).to.equal('User Review berhasil dihapus', 'Response message tidak sesuai')
             })
             .end(done);
     });
