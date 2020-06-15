@@ -176,7 +176,7 @@ router.delete('/:id', [
                 'id': req.params.id
             }
         });
-        if (selectReview == null) {
+        if (!selectReview) {
             return response.notFound(res, 'Review tidak ditemukan')
         }
         if (req.user_auth.tipe != 3 && req.user_auth.id != selectReview.id_user) {
@@ -189,14 +189,10 @@ router.delete('/:id', [
             }
         })
         if (user_review) {
-            res.json({
-                'status': 'OK',
-                'message': 'User review berhasil dihapus',
-            })
-        } else {
-            return response.notFound(
-                res, 'Review Not Found'
-            )
+            return response.delete(
+                res,
+                'User Review berhasil dihapus'
+            );
         }
     } catch (err) {
         res.status(400).json({
