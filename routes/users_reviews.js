@@ -144,15 +144,20 @@ router.patch('/:id', [
                 id: id
             }
         });
-        if (user_review) {
-            res.json({
+        const updated_user_review = await model.users_reviews.findOne({
+            where: {
+                id: id
+            }
+        });
+        if (updated_user_review) {
+            return res.json({
                 'status': 'OK',
                 'message': 'User berhasil diupdate',
-                'data': user_review,
+                'data': updated_user_review,
             })
         }
     } catch (err) {
-        res.status(400).json({
+        return res.status(400).json({
             'status': 'ERROR',
             'message': err.message,
         })
